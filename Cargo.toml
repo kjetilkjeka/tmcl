@@ -3,4 +3,8 @@ name = "tmcl"
 version = "0.0.0"
 authors = ["Kjetil Kjeka <kjetilkjeka@gmail.com>"]
 
+[features]
+std = []
+
 [dependencies]
+socketcan = {version = "1.7", optional = true}

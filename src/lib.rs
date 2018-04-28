@@ -1,4 +1,10 @@
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
+
+#[cfg(feature = "socketcan")]
+extern crate socketcan;
+
+#[cfg(feature = "socketcan")]
+mod socketcan_impl;
 
 pub mod instructions;
 pub mod axis_parameters;
@@ -11,6 +17,16 @@ pub use axis_parameters::{
 };
 
 pub use instructions::Instruction;
+
+/// A interface for a TMCM module
+///
+/// Can be RS232, RS485, CAN or I2C
+pub trait Interface {
+    type Error;
+
+    fn transmit_command<T: Instruction>(&self, command: &Command<T>) -> Result<(), Self::Error>;
+    fn receive_reply(&self) -> Result<Reply, Self::Error>;
+}
 
 /// A `Comamnd` is an `Instruction` with a module address.
 ///
