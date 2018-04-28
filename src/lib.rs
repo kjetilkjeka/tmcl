@@ -11,8 +11,12 @@ pub trait Instruction {
     fn serialize_value(&self) -> [u8; 4];
 }
 
+/// A `Comamnd` is an `Instruction` with a module address.
+///
+/// It contains everything required to serialize itself into Binary command format.
 #[derive(Debug, PartialEq)]
 pub struct Command<T: Instruction> {
+    module_address: u8,
     instruction: T,
 }
 
@@ -53,8 +57,13 @@ pub enum Status {
 }
 
 impl<T: Instruction> Command<T> {
-    pub fn new(instruction: T) -> Command<T> {
-        Command{instruction}
+    pub fn new(module_address: u8, instruction: T) -> Command<T> {
+        Command{module_address, instruction}
+    }
+
+    /// Returns the module address
+    pub fn module_address(&self) -> u8 {
+        self.module_address
     }
 
     /// Serialize into binary command format suited for RS232, RS485 etc
