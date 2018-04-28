@@ -8,6 +8,9 @@ pub trait Instruction {
     fn serialize_value(&self) -> [u8; 4];
 }
 
+/// ROR - Rotate Right
+///
+/// This instruction starts rotation in "right" direction, i.e. increasing the position counter.
 #[derive(Debug, PartialEq)]
 pub struct ROR {
     motor_number: u8,
@@ -37,6 +40,9 @@ impl Instruction for ROR {
     }
 }
 
+/// ROL - Rotate Left
+///
+/// This instruction starts rotation in "left" direction, i.e. decreasing the position counter.
 #[derive(Debug, PartialEq)]
 pub struct ROL {
     motor_number: u8,
@@ -66,6 +72,9 @@ impl Instruction for ROL {
     }
 }
 
+/// MST - Motor Stop
+///
+/// This instruction stops the motor.
 #[derive(Debug, PartialEq)]
 pub struct MST {
     motor_number: u8,
