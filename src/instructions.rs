@@ -1,3 +1,9 @@
+use {
+    AxisParameter,
+    WriteableAxisParameter,
+    ReadableAxisParameter,
+    StorableAxisParameter,
+};
 
 pub trait Instruction {
     /// The command number (sometimes referred to as the instruction number).
@@ -91,6 +97,41 @@ impl Instruction for MST {
 
     fn type_number(&self) -> u8 {
         0
+    }
+
+    fn motor_number(&self) -> u8 {
+        self.motor_number
+    }
+}
+
+/// SAP - Set Axis Parameter
+///
+/// Most parameters of a TMCM module can be adjusted individually for each axis.
+/// Although  these parameters vary widely in their formats (1 to 24 bits, signed or unsigned)
+/// and physical locations (TMC428, TMC453, controller RAM, controller EEPROM),
+/// they all can be set by this function.
+#[derive(Debug, PartialEq)]
+pub struct SAP<T: WriteableAxisParameter> {
+    motor_number: u8,
+    axis_parameter: T,
+}
+impl<T: WriteableAxisParameter> SAP<T> {
+    pub fn new(motor_number: u8, axis_parameter: T) -> SAP<T> {
+        SAP{
+            motor_number,
+            axis_parameter
+        }
+    }
+}
+impl<T: WriteableAxisParameter> Instruction for SAP<T> {
+    const INSTRUCTION_NUMBER: u8 = 5;
+
+    fn serialize_value(&self) -> [u8; 4] {
+        self.axis_parameter.serialize_value()
+    }
+
+    fn type_number(&self) -> u8 {
+        T::NUMBER
     }
 
     fn motor_number(&self) -> u8 {

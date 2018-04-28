@@ -1,7 +1,14 @@
 #![no_std]
 
 pub mod instructions;
+pub mod axis_parameters;
 
+pub use axis_parameters::{
+    AxisParameter,
+    ReadableAxisParameter,
+    WriteableAxisParameter,
+    StorableAxisParameter,
+};
 
 pub use instructions::Instruction;
 
