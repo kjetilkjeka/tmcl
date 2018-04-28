@@ -1,4 +1,12 @@
-use Instruction;
+
+pub trait Instruction {
+    /// The command number (sometimes referred to as the instruction number).
+    const INSTRUCTION_NUMBER: u8;
+
+    fn type_number(&self) -> u8;
+    fn motor_number(&self) -> u8;
+    fn serialize_value(&self) -> [u8; 4];
+}
 
 #[derive(Debug, PartialEq)]
 pub struct ROR {

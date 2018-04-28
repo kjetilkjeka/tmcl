@@ -2,14 +2,8 @@
 
 pub mod instructions;
 
-pub trait Instruction {
-    /// The command number (sometimes referred to as the instruction number).
-    const INSTRUCTION_NUMBER: u8;
 
-    fn type_number(&self) -> u8;
-    fn motor_number(&self) -> u8;
-    fn serialize_value(&self) -> [u8; 4];
-}
+pub use instructions::Instruction;
 
 /// A `Comamnd` is an `Instruction` with a module address.
 ///
