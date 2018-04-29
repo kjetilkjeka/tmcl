@@ -1,5 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#[cfg(feature = "std")]
+use std::convert::TryFrom;
+
+#[cfg(not(feature = "std"))]
+use core::convert::TryFrom;
+
 #[cfg(feature = "socketcan")]
 extern crate socketcan;
 
@@ -46,15 +52,18 @@ pub struct Reply {
     command_number: u8,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum Status {
 
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum OkStatus {
     /// Successfully executed, no error
     Ok = 100,
 
     /// Command loaded into TMCL program EEPROM
     LoadedIntoEEPROM = 101,
+}
 
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum ErrStatus {
     /// Wrong checksum
     WrongChecksum = 1,
 
@@ -74,6 +83,9 @@ pub enum Status {
     CommandNotAvailable = 6,
 }
 
+#[must_use]
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Status(Result<OkStatus, ErrStatus>);
 impl<T: Instruction> Command<T> {
     pub fn new(module_address: u8, instruction: T) -> Command<T> {
         Command{module_address, instruction}
@@ -109,6 +121,34 @@ impl<T: Instruction> Command<T> {
         ]
     }
 
+}
+
+impl Status {
+    /// Returns `true` if `Status` is `Ok` or `LoadedIntoEEPROM`
+    fn is_ok(&self) -> bool {
+        self.0.is_ok()
+    }
+}
+
+#[derive(Debug)]
+pub struct NonValidErrorCode;
+
+impl TryFrom<u8> for Status {
+    type Error = NonValidErrorCode;
+
+    fn try_from(id: u8) -> Result<Status, Self::Error> {
+        match id {
+            100 => Ok(Status(Ok(OkStatus::Ok))),
+            101 => Ok(Status(Ok(OkStatus::LoadedIntoEEPROM))),
+            1 => Ok(Status(Err(ErrStatus::WrongChecksum))),
+            2 => Ok(Status(Err(ErrStatus::InvalidCommand))),
+            3 => Ok(Status(Err(ErrStatus::WrongType))),
+            4 => Ok(Status(Err(ErrStatus::InvalidValue))),
+            5 => Ok(Status(Err(ErrStatus::EEPROMLocked))),
+            6 => Ok(Status(Err(ErrStatus::CommandNotAvailable))),
+            _ => Err(NonValidErrorCode),
+        }
+    }
 }
 
 impl Return for () {
