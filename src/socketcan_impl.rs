@@ -9,6 +9,7 @@ use Interface;
 use Instruction;
 use Reply;
 use Command;
+use Status;
 
 impl Interface for CANSocket {
     type Error = io::Error;
@@ -19,7 +20,14 @@ impl Interface for CANSocket {
     }
 
     fn receive_reply(&self) -> Result<Reply, Self::Error> {
-        //let frame = self.read_frame()?;
-        unimplemented!()
+        // TODO: make robust
+        let frame = self.read_frame()?;
+        Ok(Reply::new(
+            frame.id() as u8,
+            frame.data()[0],
+            Status::try_from_u8(frame.data()[1]).unwrap(),
+            frame.data()[2],
+            [frame.data()[3], frame.data()[4], frame.data()[5], frame.data()[6]],
+        ))
     }
 }
