@@ -1,10 +1,5 @@
+
 #![cfg_attr(not(feature = "std"), no_std)]
-
-#[cfg(feature = "std")]
-use std::convert::TryFrom;
-
-#[cfg(not(feature = "std"))]
-use core::convert::TryFrom;
 
 #[cfg(feature = "socketcan")]
 extern crate socketcan;
@@ -160,15 +155,9 @@ impl Status {
     fn is_ok(&self) -> bool {
         self.0.is_ok()
     }
-}
 
-#[derive(Debug)]
-pub struct NonValidErrorCode;
-
-impl TryFrom<u8> for Status {
-    type Error = NonValidErrorCode;
-
-    fn try_from(id: u8) -> Result<Status, Self::Error> {
+    /// Fallible conversion from `u8`
+    fn try_from_u8(id: u8) -> Result<Status, NonValidErrorCode> {
         match id {
             100 => Ok(Status(Ok(OkStatus::Ok))),
             101 => Ok(Status(Ok(OkStatus::LoadedIntoEEPROM))),
@@ -182,6 +171,9 @@ impl TryFrom<u8> for Status {
         }
     }
 }
+
+#[derive(Debug)]
+pub struct NonValidErrorCode;
 
 impl Return for () {
     fn deserialize(_array: [u8; 4]) -> () {()}
