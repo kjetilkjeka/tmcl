@@ -17,6 +17,7 @@ pub use axis_parameters::{
 };
 
 pub use instructions::Instruction;
+use instructions::Return;
 
 /// A interface for a TMCM module
 ///
@@ -108,6 +109,10 @@ impl<T: Instruction> Command<T> {
         ]
     }
 
+}
+
+impl Return for () {
+    fn deserialize(_array: [u8; 4]) -> () {()}
 }
 
 #[cfg(test)]
