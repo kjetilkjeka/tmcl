@@ -44,12 +44,18 @@ pub struct Command<T: Instruction> {
     instruction: T,
 }
 
-#[derive(Debug, PartialEq)]
+/// A TMCM module will respond with a `Reply` after receiving a `Command`.
+#[derive(Debug, PartialEq, Clone)]
 pub struct Reply {
-    // TODO: Add fields
+    reply_address: u8,
+
+    module_address: u8,
+
     status: Status,
 
     command_number: u8,
+
+    value: [u8; 4],
 }
 
 
@@ -121,6 +127,32 @@ impl<T: Instruction> Command<T> {
         ]
     }
 
+}
+
+impl Reply {
+    fn new(
+        reply_address: u8,
+        module_address: u8,
+        status: Status,
+        command_number: u8,
+        value: [u8; 4],
+    ) -> Self {
+        Reply {
+            reply_address,
+            module_address,
+            status,
+            command_number,
+            value,
+        }
+    }
+
+    fn value(&self) -> [u8; 4] {
+        self.value
+    }
+
+    fn status(&self) -> Status {
+        self.status
+    }
 }
 
 impl Status {
