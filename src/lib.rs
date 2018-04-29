@@ -20,6 +20,13 @@ pub use axis_parameters::{
 pub use instructions::Instruction;
 use instructions::Return;
 
+/// A TMCM module
+#[derive(Debug)]
+pub struct Module {
+    /// The module address
+    address: u8,
+}
+
 /// A interface for a TMCM module
 ///
 /// Can be RS232, RS485, CAN or I2C
@@ -87,6 +94,25 @@ pub enum ErrStatus {
 #[must_use]
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Status(Result<OkStatus, ErrStatus>);
+
+impl Module {
+    /// Create a new module
+    pub fn new(address: u8) -> Self {
+        Module{address}
+    }
+
+    /// Synchronously write a command and wait for the Reply
+    pub fn write_command<I: Interface, C: Instruction>(&self, interface: &I, instruction: C) -> Result<Result<C::Return, Status>, I::Error> {
+        interface.transmit_command(&Command::new(self.address, instruction))?;
+        let reply = interface.receive_reply()?;
+        if reply.status().is_ok() {
+            Ok(Ok(<C::Return as Return>::deserialize(reply.value())))
+        } else {
+            Ok(Err(reply.status()))
+        }
+    }
+}
+
 impl<T: Instruction> Command<T> {
     pub fn new(module_address: u8, instruction: T) -> Command<T> {
         Command{module_address, instruction}
