@@ -16,7 +16,59 @@ use modules::tmcm::{
     WriteableTmcmAxisParameter,
     StorableTmcmAxisParameter,
 };
+#[derive(Debug, PartialEq)]
+pub struct ActualPosition {
+    pos: i32,
+}
+impl ActualPosition {
+    pub fn value(&self) -> i32 {
+        self.pos
+    }
+}
+impl AxisParameter for ActualPosition {
+    const NUMBER: u8 = 1;
+}
+impl Return for ActualPosition {
+    fn deserialize(array: [u8; 4]) -> Self {
+        ActualPosition{pos:
+            (array[3] as u32 |
+            ((array[2] as u32) << 8) |
+            ((array[1] as u32) << 16) |
+            ((array[0] as u32) << 24)) as i32
+        }
+    }
+}
+impl ReadableAxisParameter for ActualPosition {}
+impl ReadableTmcmAxisParameter for ActualPosition {}
+impl WriteableAxisParameter for ActualPosition {
+    fn serialize_value(&self) -> [u8; 4] {
+        [(self.pos >> 24) as u8, (self.pos >> 16) as u8, (self.pos >> 8) as u8 , self.pos as u8]
+    }
+}
+impl WriteableTmcmAxisParameter for ActualPosition {}
 
+#[derive(Debug, PartialEq)]
+pub struct ActualSpeed {
+    speed: i16,
+}
+impl ActualSpeed {
+    pub fn value(&self) -> i16 {
+        self.speed
+    }
+}
+impl AxisParameter for ActualSpeed {
+    const NUMBER: u8 = 3;
+}
+impl Return for ActualSpeed {
+    fn deserialize(array: [u8; 4]) -> Self {
+        ActualSpeed{speed:
+            (array[3] as u16 |
+            ((array[2] as u16) << 8)) as i16
+        }
+    }
+}
+impl ReadableAxisParameter for ActualSpeed {}
+impl ReadableTmcmAxisParameter for ActualSpeed {}
 
 #[derive(Debug, PartialEq)]
 pub struct RightLimitSwitchDisable {

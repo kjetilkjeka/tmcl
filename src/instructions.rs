@@ -1,3 +1,8 @@
+#[cfg(feature="std")]
+use std::marker::PhantomData;
+#[cfg(not(feature="std"))]
+use core::marker::PhantomData;
+
 use {
     AxisParameter,
     WriteableAxisParameter,
@@ -162,4 +167,42 @@ impl<T: WriteableAxisParameter> Instruction for SAP<T> {
 }
 impl<T: WriteableAxisParameter> DirectInstruction for SAP<T> {
     type Return = ();
+}
+
+/// GAP - Get Axis Parameter
+///
+/// Most parameters of a TMCM module can be adjusted individually for each axis.
+/// Although  these parameters vary widely in their formats (1 to 24 bits, signed or unsigned)
+/// and physical locations (TMC428, TMC453, controller RAM, controller EEPROM),
+/// they all can be read by this function.
+#[derive(Debug, PartialEq)]
+pub struct GAP<T: ReadableAxisParameter> {
+    motor_number: u8,
+    phantom: PhantomData<T>,
+}
+impl<T: ReadableAxisParameter> GAP<T> {
+    pub fn new(motor_number: u8) -> GAP<T> {
+        GAP{
+            motor_number,
+            phantom: PhantomData,
+        }
+    }
+}
+impl<T: ReadableAxisParameter> Instruction for GAP<T> {
+    const INSTRUCTION_NUMBER: u8 = 6;
+
+    fn serialize_value(&self) -> [u8; 4] {
+        [0u8, 0u8, 0u8, 0u8]
+    }
+
+    fn type_number(&self) -> u8 {
+        T::NUMBER
+    }
+
+    fn motor_number(&self) -> u8 {
+        self.motor_number
+    }
+}
+impl<T: ReadableAxisParameter> DirectInstruction for GAP<T> {
+    type Return = T;
 }

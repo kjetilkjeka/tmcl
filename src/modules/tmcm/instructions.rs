@@ -5,6 +5,7 @@ pub use instructions::{
     ROL,
     MST,
     SAP,
+    GAP,
 };
 
 use modules::tmcm::TmcmInstruction;
@@ -20,3 +21,4 @@ impl TmcmInstruction for ROR {}
 impl TmcmInstruction for ROL {}
 impl TmcmInstruction for MST {}
 impl<T: WriteableTmcmAxisParameter> TmcmInstruction for SAP<T> {}
+impl<T: ReadableTmcmAxisParameter> TmcmInstruction for GAP<T> {}
