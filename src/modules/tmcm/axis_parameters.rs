@@ -1,4 +1,8 @@
 //! All axis parameters useable with TMCM modules other than TMCM-100 and Monopack 2.
+//!
+//! Mnemonics for macros:
+//! - RLSD - RightLimitSwitchDisable
+//! - LLSD - LeftLimitSwitchDisable
 
 use AxisParameter;
 use ReadableAxisParameter;
