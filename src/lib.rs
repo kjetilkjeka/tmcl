@@ -7,25 +7,11 @@ extern crate socketcan;
 #[cfg(feature = "socketcan")]
 mod socketcan_impl;
 
-pub mod instructions;
-pub mod axis_parameters;
-
-pub use axis_parameters::{
-    AxisParameter,
-    ReadableAxisParameter,
-    WriteableAxisParameter,
-    StorableAxisParameter,
-};
+mod instructions;
+pub mod modules;
 
 pub use instructions::Instruction;
 use instructions::Return;
-
-/// A TMCM module
-#[derive(Debug)]
-pub struct Module {
-    /// The module address
-    address: u8,
-}
 
 /// A interface for a TMCM module
 ///
@@ -60,6 +46,21 @@ pub struct Reply {
     value: [u8; 4],
 }
 
+/// Axis parameter - useable with SAP, GAP, AAP, STAP and/or RSAP instructions.
+pub trait AxisParameter {
+    const NUMBER: u8;
+
+    fn serialize_value(&self) -> [u8; 4];
+}
+
+/// An axis parameter useable with the GAP instruction.
+pub trait ReadableAxisParameter: AxisParameter {}
+
+/// An axis parameter useable with the SAP instruction.
+pub trait WriteableAxisParameter: AxisParameter {}
+
+/// An axis parameter useable with the STAP and RSAP instructions.
+pub trait StorableAxisParameter: AxisParameter {}
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum OkStatus {
@@ -94,24 +95,6 @@ pub enum ErrStatus {
 #[must_use]
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Status(Result<OkStatus, ErrStatus>);
-
-impl Module {
-    /// Create a new module
-    pub fn new(address: u8) -> Self {
-        Module{address}
-    }
-
-    /// Synchronously write a command and wait for the Reply
-    pub fn write_command<I: Interface, C: Instruction>(&self, interface: &I, instruction: C) -> Result<Result<C::Return, Status>, I::Error> {
-        interface.transmit_command(&Command::new(self.address, instruction))?;
-        let reply = interface.receive_reply()?;
-        if reply.status().is_ok() {
-            Ok(Ok(<C::Return as Return>::deserialize(reply.value())))
-        } else {
-            Ok(Err(reply.status()))
-        }
-    }
-}
 
 impl<T: Instruction> Command<T> {
     pub fn new(module_address: u8, instruction: T) -> Command<T> {

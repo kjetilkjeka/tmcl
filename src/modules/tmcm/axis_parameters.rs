@@ -1,20 +1,17 @@
-//! Axis parameters - useable with SAP, GAP, AAP, STAP and RSAP instructions.
-//!
-//! Please  note  that  the TMCM-100 units uses a different parameter set
-//! (see TODO: insert link to module),
-//! but all other TMCL stepper motor modules use these parameters
+//! All axis parameters useable with TMCM modules other than TMCM-100 and Monopack 2.
 
-pub trait AxisParameter {
-    const NUMBER: u8;
+use AxisParameter;
+use ReadableAxisParameter;
+use WriteableAxisParameter;
+use StorableAxisParameter;
 
-    fn serialize_value(&self) -> [u8; 4];
-}
+use modules::tmcm::{
+    TmcmAxisParameter,
+    ReadableTmcmAxisParameter,
+    WriteableTmcmAxisParameter,
+    StorableTmcmAxisParameter,
+};
 
-pub trait ReadableAxisParameter: AxisParameter {}
-
-pub trait WriteableAxisParameter: AxisParameter {}
-
-pub trait StorableAxisParameter: AxisParameter {}
 
 #[derive(Debug, PartialEq)]
 pub struct RightLimitSwitchDisable {
@@ -35,9 +32,13 @@ impl AxisParameter for RightLimitSwitchDisable {
         [0u8, 0u8, 0u8, self.status as u8]
     }
 }
+impl TmcmAxisParameter for RightLimitSwitchDisable {}
 impl ReadableAxisParameter for RightLimitSwitchDisable {}
+impl ReadableTmcmAxisParameter for RightLimitSwitchDisable {}
 impl WriteableAxisParameter for RightLimitSwitchDisable {}
+impl WriteableTmcmAxisParameter for RightLimitSwitchDisable {}
 impl StorableAxisParameter for RightLimitSwitchDisable {}
+impl StorableTmcmAxisParameter for RightLimitSwitchDisable {}
 
 #[derive(Debug, PartialEq)]
 pub struct LeftLimitSwitchDisable {
@@ -58,6 +59,10 @@ impl AxisParameter for LeftLimitSwitchDisable {
         [0u8, 0u8, 0u8, self.status as u8]
     }
 }
+impl TmcmAxisParameter for LeftLimitSwitchDisable {}
 impl ReadableAxisParameter for LeftLimitSwitchDisable {}
+impl ReadableTmcmAxisParameter for LeftLimitSwitchDisable {}
 impl WriteableAxisParameter for LeftLimitSwitchDisable {}
+impl WriteableTmcmAxisParameter for LeftLimitSwitchDisable {}
 impl StorableAxisParameter for LeftLimitSwitchDisable {}
+impl StorableTmcmAxisParameter for LeftLimitSwitchDisable {}
