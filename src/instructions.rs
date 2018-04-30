@@ -130,6 +130,107 @@ impl DirectInstruction for MST {
     type Return = ();
 }
 
+/// The type and value of a `MVP` instruction
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum Move {
+    /// Moving to an absolute position in the range from -8388608 to +8388608 (-2^23 to +2^23).
+    Absolute(i32),
+
+    /// Starting a relative movement by means of an offset to the actual position. In this case,
+    /// the resulting new position value must not exceed the above mentioned limits, too.
+    Relative(i32),
+
+    /// Moving one or more motors to a (previously stored) coordinate,
+    ///
+    /// When moving more than one axis the  module will try  to  interpolate:
+    /// The velocities will be calculated so that  all  motors reach their target positions at the same time.
+    /// It is important that the maximum accelerations (axis parameter #5) and the ramp  and
+    /// pulse dividers (axis parameters #153 and #154) of all axes are set to the same values
+    /// as otherwise interpolation will not work correctly.
+    Coordinate(Coordinate),
+}
+
+/// A coordinate number in a `MVP` instruction
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum Coordinate {
+    Coordinate0 = 0,
+    Coordinate1 = 1,
+    Coordinate2 = 2,
+    Coordinate3 = 3,
+    Coordinate4 = 4,
+    Coordinate5 = 5,
+    Coordinate6 = 6,
+    Coordinate7 = 7,
+    Coordinate8 = 8,
+    Coordinate9 = 9,
+    Coordinate10 = 10,
+    Coordinate11 = 11,
+    Coordinate12 = 12,
+    Coordinate13 = 13,
+    Coordinate14 = 14,
+    Coordinate15 = 15,
+    Coordinate16 = 16,
+    Coordinate17 = 17,
+    Coordinate18 = 18,
+    Coordinate19 = 19,
+    Coordinate20 = 20,
+}
+
+impl From<Coordinate> for u8 {
+    fn from(c: Coordinate) -> u8 {
+        c as u8
+    }
+}
+
+/// MVP - Move to Position
+///
+/// A movement towards the specified position is started, with automatic generation of acceleration
+/// and deceleration ramps. The maximum velocity and acceleration are defined by axis parameters #4 and #5.
+#[derive(Debug, PartialEq)]
+pub struct MVP {
+    motor_number: u8,
+    value: Move,
+}
+impl MVP {
+    pub fn new(motor_number: u8, value: Move) -> MVP {MVP{motor_number, value}}
+}
+impl Instruction for MVP {
+    const INSTRUCTION_NUMBER: u8 = 4;
+
+    fn serialize_value(&self) -> [u8; 4] {
+        match self.value {
+            Move::Absolute(x) => {
+                [
+                    ((x >> 24) & 0xff) as u8,
+                    ((x >> 16) & 0xff) as u8,
+                    ((x >> 8) & 0xff) as u8,
+                    (x & 0xff) as u8
+                ]
+            },
+            Move::Relative(x) => {
+                [
+                    ((x >> 24) & 0xff) as u8,
+                    ((x >> 16) & 0xff) as u8,
+                    ((x >> 8) & 0xff) as u8,
+                    (x & 0xff) as u8
+                ]
+            },
+            Move::Coordinate(x) => [0, 0, 0, u8::from(x)],
+        }
+    }
+
+    fn type_number(&self) -> u8 {
+        0
+    }
+
+    fn motor_number(&self) -> u8 {
+        self.motor_number
+    }
+}
+impl DirectInstruction for MVP {
+    type Return = ();
+}
+
 
 /// SAP - Set Axis Parameter
 ///
