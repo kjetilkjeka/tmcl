@@ -8,6 +8,7 @@ use AxisParameter;
 use ReadableAxisParameter;
 use WriteableAxisParameter;
 use StorableAxisParameter;
+use Return;
 
 use modules::tmcm::{
     TmcmAxisParameter,
@@ -31,15 +32,18 @@ impl RightLimitSwitchDisable {
 }
 impl AxisParameter for RightLimitSwitchDisable {
     const NUMBER: u8 = 12;
-
-    fn serialize_value(&self) -> [u8; 4] {
-        [0u8, 0u8, 0u8, self.status as u8]
-    }
+}
+impl Return for RightLimitSwitchDisable {
+    fn deserialize(array: [u8; 4]) -> Self {RightLimitSwitchDisable{status: array[0] != 0}}
 }
 impl TmcmAxisParameter for RightLimitSwitchDisable {}
 impl ReadableAxisParameter for RightLimitSwitchDisable {}
 impl ReadableTmcmAxisParameter for RightLimitSwitchDisable {}
-impl WriteableAxisParameter for RightLimitSwitchDisable {}
+impl WriteableAxisParameter for RightLimitSwitchDisable {
+    fn serialize_value(&self) -> [u8; 4] {
+        [0u8, 0u8, 0u8, self.status as u8]
+    }
+}
 impl WriteableTmcmAxisParameter for RightLimitSwitchDisable {}
 impl StorableAxisParameter for RightLimitSwitchDisable {}
 impl StorableTmcmAxisParameter for RightLimitSwitchDisable {}
@@ -58,15 +62,18 @@ impl LeftLimitSwitchDisable {
 }
 impl AxisParameter for LeftLimitSwitchDisable {
     const NUMBER: u8 = 13;
-
-    fn serialize_value(&self) -> [u8; 4] {
-        [0u8, 0u8, 0u8, self.status as u8]
-    }
+}
+impl Return for LeftLimitSwitchDisable {
+    fn deserialize(array: [u8; 4]) -> Self {LeftLimitSwitchDisable{status: array[0] != 0}}
 }
 impl TmcmAxisParameter for LeftLimitSwitchDisable {}
 impl ReadableAxisParameter for LeftLimitSwitchDisable {}
 impl ReadableTmcmAxisParameter for LeftLimitSwitchDisable {}
-impl WriteableAxisParameter for LeftLimitSwitchDisable {}
+impl WriteableAxisParameter for LeftLimitSwitchDisable {
+    fn serialize_value(&self) -> [u8; 4] {
+        [0u8, 0u8, 0u8, self.status as u8]
+    }
+}
 impl WriteableTmcmAxisParameter for LeftLimitSwitchDisable {}
 impl StorableAxisParameter for LeftLimitSwitchDisable {}
 impl StorableTmcmAxisParameter for LeftLimitSwitchDisable {}

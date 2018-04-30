@@ -50,15 +50,15 @@ pub struct Reply {
 /// Axis parameter - useable with SAP, GAP, AAP, STAP and/or RSAP instructions.
 pub trait AxisParameter {
     const NUMBER: u8;
-
-    fn serialize_value(&self) -> [u8; 4];
 }
 
 /// An axis parameter useable with the GAP instruction.
-pub trait ReadableAxisParameter: AxisParameter {}
+pub trait ReadableAxisParameter: AxisParameter + Return {}
 
 /// An axis parameter useable with the SAP instruction.
-pub trait WriteableAxisParameter: AxisParameter {}
+pub trait WriteableAxisParameter: AxisParameter {
+    fn serialize_value(&self) -> [u8; 4];
+}
 
 /// An axis parameter useable with the STAP and RSAP instructions.
 pub trait StorableAxisParameter: AxisParameter {}
