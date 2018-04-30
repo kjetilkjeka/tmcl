@@ -5,9 +5,9 @@ macro_rules! tmcl_instruction {
     (MST $motor_number:expr) => {MST::new($motor_number)};
 
     // SAP instructions with tmcm mnemonics
-    (SAP $motor_number:expr, RLSD, 1) => {SAP::new($motor_number, RightLimitSwitchDisable::disabled())};
-    (SAP $motor_number:expr, RLSD, 0) => {SAP::new($motor_number, RightLimitSwitchDisable::enabled())};
-    (SAP $motor_number:expr, LLSD, 1) => {SAP::new($motor_number, LeftLimitSwitchDisable::disabled())};
-    (SAP $motor_number:expr, LLSD, 0) => {SAP::new($motor_number, LeftLimitSwitchDisable::enabled())};
+    (SAP RLSD, $motor_number:expr, 1) => {SAP::new($motor_number, RightLimitSwitchDisable::disabled())};
+    (SAP RLSD, $motor_number:expr, 0) => {SAP::new($motor_number, RightLimitSwitchDisable::enabled())};
+    (SAP LLSD, $motor_number:expr, 1) => {SAP::new($motor_number, LeftLimitSwitchDisable::disabled())};
+    (SAP LLSD, $motor_number:expr, 0) => {SAP::new($motor_number, LeftLimitSwitchDisable::enabled())};
 
 }
