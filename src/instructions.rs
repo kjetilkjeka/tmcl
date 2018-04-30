@@ -6,15 +6,18 @@ use {
 };
 
 pub trait Instruction {
-    /// The return value when the `Instruction` is executed.
-    type Return: Return;
-
     /// The command number (sometimes referred to as the instruction number).
     const INSTRUCTION_NUMBER: u8;
 
     fn type_number(&self) -> u8;
     fn motor_number(&self) -> u8;
     fn serialize_value(&self) -> [u8; 4];
+}
+
+/// An `Instruction` useable in direct mode
+pub trait DirectInstruction: Instruction {
+    /// The return value when the `Instruction` is executed in direct mode.
+    type Return: Return;
 }
 
 /// A type that can be used as a return value for an `Instruction`
@@ -34,8 +37,6 @@ impl ROR {
     pub fn new(motor_number: u8, velocity: u32) -> ROR {ROR{motor_number, velocity}}
 }
 impl Instruction for ROR {
-    type Return = ();
-
     const INSTRUCTION_NUMBER: u8 = 1;
 
     fn serialize_value(&self) -> [u8; 4] {
@@ -55,6 +56,9 @@ impl Instruction for ROR {
         self.motor_number
     }
 }
+impl DirectInstruction for ROR {
+    type Return = ();
+}
 
 /// ROL - Rotate Left
 ///
@@ -68,8 +72,6 @@ impl ROL {
     pub fn new(motor_number: u8, velocity: u32) -> ROL {ROL{motor_number, velocity}}
 }
 impl Instruction for ROL {
-    type Return = ();
-
     const INSTRUCTION_NUMBER: u8 = 2;
 
     fn serialize_value(&self) -> [u8; 4] {
@@ -89,6 +91,10 @@ impl Instruction for ROL {
         self.motor_number
     }
 }
+impl DirectInstruction for ROL {
+    type Return = ();
+}
+
 
 /// MST - Motor Stop
 ///
@@ -101,8 +107,6 @@ impl MST {
     pub fn new(motor_number: u8) -> MST {MST{motor_number}}
 }
 impl Instruction for MST {
-    type Return = ();
-
     const INSTRUCTION_NUMBER: u8 = 3;
 
     fn serialize_value(&self) -> [u8; 4] {
@@ -117,6 +121,10 @@ impl Instruction for MST {
         self.motor_number
     }
 }
+impl DirectInstruction for MST {
+    type Return = ();
+}
+
 
 /// SAP - Set Axis Parameter
 ///
@@ -138,8 +146,6 @@ impl<T: WriteableAxisParameter> SAP<T> {
     }
 }
 impl<T: WriteableAxisParameter> Instruction for SAP<T> {
-    type Return = ();
-
     const INSTRUCTION_NUMBER: u8 = 5;
 
     fn serialize_value(&self) -> [u8; 4] {
@@ -153,4 +159,7 @@ impl<T: WriteableAxisParameter> Instruction for SAP<T> {
     fn motor_number(&self) -> u8 {
         self.motor_number
     }
+}
+impl<T: WriteableAxisParameter> DirectInstruction for SAP<T> {
+    type Return = ();
 }

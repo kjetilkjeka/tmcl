@@ -4,6 +4,7 @@ pub mod instructions;
 pub mod axis_parameters;
 
 use Instruction;
+use instructions::DirectInstruction;
 use Interface;
 use Return;
 use Status;
@@ -28,7 +29,7 @@ impl TmcmModule {
     }
 
     /// Synchronously write a command and wait for the Reply
-    pub fn write_command<I: Interface, C: TmcmInstruction>(&self, interface: &I, instruction: C) -> Result<Result<C::Return, Status>, I::Error> {
+    pub fn write_command<I: Interface, C: TmcmInstruction + DirectInstruction>(&self, interface: &I, instruction: C) -> Result<Result<C::Return, Status>, I::Error> {
         interface.transmit_command(&Command::new(self.address, instruction))?;
         let reply = interface.receive_reply()?;
         if reply.status().is_ok() {
