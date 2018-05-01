@@ -33,6 +33,8 @@ macro_rules! tmcl_instruction {
     // SAP instructions with tmcm mnemonics
     (SAP MPS, $motor_number:expr, $speed:expr) => {SAP::new($motor_number, MaximumPositioningSpeed::new($speed))};
 
+    (SAP AMC, $motor_number:expr, $current:expr) => {SAP::new($motor_number, AbsoluteMaxCurrent::new($current))};
+
     (SAP RLSD, $motor_number:expr, 1) => {SAP::new($motor_number, RightLimitSwitchDisable::disabled())};
     (SAP RLSD, $motor_number:expr, 0) => {SAP::new($motor_number, RightLimitSwitchDisable::enabled())};
 
@@ -54,6 +56,7 @@ macro_rules! tmcl_instruction {
     (GAP AP, $motor_number:expr) => {GAP::<ActualPosition>::new($motor_number)};
 
     // STAP instructions with tmcm mnemonics
+    (STAP AMC, $motor_number:expr) => {STAP::<AbsoluteMaxCurrent>::new($motor_number)};
     (STAP RLSD, $motor_number:expr) => {STAP::<RightLimitSwitchDisable>::new($motor_number)};
     (STAP LLSD, $motor_number:expr) => {STAP::<LeftLimitSwitchDisable>::new($motor_number)};
     (STAP AS, $motor_number:expr) => {STAP::<ActualSpeed>::new($motor_number)};

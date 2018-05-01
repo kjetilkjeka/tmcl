@@ -103,6 +103,39 @@ impl WriteableAxisParameter for MaximumPositioningSpeed {
 impl WriteableTmcmAxisParameter for MaximumPositioningSpeed {}
 
 #[derive(Debug, PartialEq)]
+pub struct AbsoluteMaxCurrent {
+    current: u16,
+}
+impl AbsoluteMaxCurrent {
+    pub fn new(current: u16) -> Self {
+        AbsoluteMaxCurrent{current}
+    }
+    pub fn value(&self) -> u16 {
+        self.current
+    }
+}
+impl AxisParameter for AbsoluteMaxCurrent {
+    const NUMBER: u8 = 6;
+}
+impl Return for AbsoluteMaxCurrent {
+    fn deserialize(array: [u8; 4]) -> Self {
+        AbsoluteMaxCurrent{current:
+        (array[3] as u16 |
+            ((array[2] as u16) << 8))
+        }
+    }
+}
+impl TmcmAxisParameter for AbsoluteMaxCurrent {}
+impl ReadableAxisParameter for AbsoluteMaxCurrent {}
+impl ReadableTmcmAxisParameter for AbsoluteMaxCurrent {}
+impl WriteableAxisParameter for AbsoluteMaxCurrent {
+    fn serialize_value(&self) -> [u8; 4] {
+        [0, 0, (self.current >> 8) as u8, self.current as u8]
+    }
+}
+impl WriteableTmcmAxisParameter for AbsoluteMaxCurrent {}
+
+#[derive(Debug, PartialEq)]
 pub struct RightLimitSwitchDisable {
     status: bool,
 }
