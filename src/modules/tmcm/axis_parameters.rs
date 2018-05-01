@@ -1,8 +1,13 @@
 //! All axis parameters useable with TMCM modules other than TMCM-100 and Monopack 2.
 //!
-//! Mnemonics for macros:
-//! - RLSD - RightLimitSwitchDisable
-//! - LLSD - LeftLimitSwitchDisable
+//! # Mnemonics for use in macros:
+//! - AP - ActualPosition (1)
+//! - AS - ActualSpeed (3)
+//! - MPS - MaximumPositioningSpeed (4)
+//! - AMC - AbolsuteMaxCurrent (6)
+//! - RLSD - RightLimitSwitchDisable (12)
+//! - LLSD - LeftLimitSwitchDisable (13)
+//! - MSR - MicrostepResolution (140)
 
 use AxisParameter;
 use ReadableAxisParameter;
