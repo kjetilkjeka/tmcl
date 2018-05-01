@@ -189,6 +189,10 @@ impl Return for () {
     fn deserialize(_array: [u8; 4]) -> () {()}
 }
 
+impl Return for bool {
+    fn deserialize(array: [u8; 4]) -> bool {(array[3] & 1) != 0}
+}
+
 #[cfg(test)]
 mod tests {
     #[test]

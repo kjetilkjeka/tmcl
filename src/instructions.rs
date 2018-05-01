@@ -307,3 +307,56 @@ impl<T: ReadableAxisParameter> Instruction for GAP<T> {
 impl<T: ReadableAxisParameter> DirectInstruction for GAP<T> {
     type Return = T;
 }
+
+/// Choses what action to execute with the `RFS` instruction
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum ReferenceSearchAction {
+    /// Start reference search
+    Start = 0,
+    /// Stop reference search
+    Stop = 1,
+    /// Get status
+    Status = 2,
+}
+
+/// RFS - Reference Search
+///
+/// A build-in reference point search algorithm can be started (and stopped). The reference search
+/// algorithm provides switching point calibration and three switch modes. The status of the
+/// reference search can also be queried to see if it has already finished. (In a TMCL program
+/// it is better to use the WAIT command to wait for the end of a reference search.)
+/// Please see the appropriate parameters in the axis parameter table to configure the
+/// reference search algorithm to meet your needs. The reference search can be started or stop
+/// ped, or the actual status of the reference search can be checked.
+#[derive(Debug, PartialEq)]
+pub struct RFS {
+    motor_number: u8,
+    action: ReferenceSearchAction,
+}
+impl RFS {
+    pub fn new(motor_number: u8, action: ReferenceSearchAction) -> RFS {
+        RFS {
+            motor_number,
+            action
+        }
+    }
+}
+impl Instruction for RFS {
+    const INSTRUCTION_NUMBER: u8 = 13;
+
+    fn serialize_value(&self) -> [u8; 4] {
+        [0u8, 0u8, 0u8, 0u8]
+    }
+
+    fn type_number(&self) -> u8 {
+        self.action as u8
+    }
+
+    fn motor_number(&self) -> u8 {
+        self.motor_number
+    }
+}
+impl DirectInstruction for RFS {
+    // TODO: use const generics (when it lands) to distinguish return between RFS<Status> and RFS<_>
+    type Return = bool;
+}

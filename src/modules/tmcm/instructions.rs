@@ -7,7 +7,9 @@ pub use instructions::{
     MVP,
     SAP,
     GAP,
+    RFS,
     Move,
+    ReferenceSearchAction,
 };
 
 use modules::tmcm::TmcmInstruction;
@@ -25,3 +27,4 @@ impl TmcmInstruction for MST {}
 impl TmcmInstruction for MVP {}
 impl<T: WriteableTmcmAxisParameter> TmcmInstruction for SAP<T> {}
 impl<T: ReadableTmcmAxisParameter> TmcmInstruction for GAP<T> {}
+impl TmcmInstruction for RFS {}
