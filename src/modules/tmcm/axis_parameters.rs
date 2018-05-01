@@ -157,3 +157,51 @@ impl WriteableAxisParameter for LeftLimitSwitchDisable {
     }
 }
 impl WriteableTmcmAxisParameter for LeftLimitSwitchDisable {}
+
+/// Microstep Resolution
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum MicrostepResolution {
+    /// Fullstep
+    Full = 0,
+    /// 2 microsteps
+    Half = 1,
+    /// 4 microsteps
+    Micro4 = 2,
+    /// 8 microsteps
+    Micro8 = 3,
+    /// 16 microsteps
+    Micro16 = 4,
+    /// 32 microsteps
+    Micro32 = 5,
+    /// 64 microsteps
+    Micro64 = 6,
+}
+impl MicrostepResolution {
+    fn try_from_u8(v: u8) -> Result<Self, ()> {
+        match v {
+            0 => Ok(MicrostepResolution::Full),
+            1 => Ok(MicrostepResolution::Half),
+            2 => Ok(MicrostepResolution::Micro4),
+            3 => Ok(MicrostepResolution::Micro8),
+            4 => Ok(MicrostepResolution::Micro16),
+            5 => Ok(MicrostepResolution::Micro32),
+            6 => Ok(MicrostepResolution::Micro64),
+            _ => Err(()),
+        }
+    }
+}
+impl AxisParameter for MicrostepResolution {
+    const NUMBER: u8 = 140;
+}
+impl Return for MicrostepResolution {
+    fn deserialize(array: [u8; 4]) -> Self {MicrostepResolution::try_from_u8(array[3]).unwrap()}
+}
+impl TmcmAxisParameter for MicrostepResolution {}
+impl ReadableAxisParameter for MicrostepResolution {}
+impl ReadableTmcmAxisParameter for MicrostepResolution {}
+impl WriteableAxisParameter for MicrostepResolution {
+    fn serialize_value(&self) -> [u8; 4] {
+        [0u8, 0u8, 0u8, *self as u8]
+    }
+}
+impl WriteableTmcmAxisParameter for MicrostepResolution {}

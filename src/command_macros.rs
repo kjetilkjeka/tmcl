@@ -39,6 +39,14 @@ macro_rules! tmcl_instruction {
     (SAP LLSD, $motor_number:expr, 1) => {SAP::new($motor_number, LeftLimitSwitchDisable::disabled())};
     (SAP LLSD, $motor_number:expr, 0) => {SAP::new($motor_number, LeftLimitSwitchDisable::enabled())};
 
+    (SAP MSR, $motor_number:expr, 0) => {SAP::new($motor_number, MicrostepResolution::Full)};
+    (SAP MSR, $motor_number:expr, 1) => {SAP::new($motor_number, MicrostepResolution::Half)};
+    (SAP MSR, $motor_number:expr, 2) => {SAP::new($motor_number, MicrostepResolution::Micro4)};
+    (SAP MSR, $motor_number:expr, 3) => {SAP::new($motor_number, MicrostepResolution::Micro8)};
+    (SAP MSR, $motor_number:expr, 4) => {SAP::new($motor_number, MicrostepResolution::Micro16)};
+    (SAP MSR, $motor_number:expr, 5) => {SAP::new($motor_number, MicrostepResolution::Micro32)};
+    (SAP MSR, $motor_number:expr, 6) => {SAP::new($motor_number, MicrostepResolution::Micro64)};
+
     // GAP instructions with tmcm mnemonics
     (GAP RLSD, $motor_number:expr) => {GAP::<RightLimitSwitchDisable>::new($motor_number)};
     (GAP LLSD, $motor_number:expr) => {GAP::<LeftLimitSwitchDisable>::new::($motor_number)};
