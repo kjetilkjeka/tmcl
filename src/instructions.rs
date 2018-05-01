@@ -4,10 +4,8 @@ use std::marker::PhantomData;
 use core::marker::PhantomData;
 
 use {
-    AxisParameter,
     WriteableAxisParameter,
     ReadableAxisParameter,
-    StorableAxisParameter,
 };
 
 pub trait Instruction {

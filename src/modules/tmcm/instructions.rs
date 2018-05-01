@@ -17,7 +17,6 @@ use modules::tmcm::TmcmInstruction;
 use modules::tmcm::{
     WriteableTmcmAxisParameter,
     ReadableTmcmAxisParameter,
-    StorableTmcmAxisParameter,
 };
 
 

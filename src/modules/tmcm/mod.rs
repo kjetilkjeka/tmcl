@@ -12,7 +12,6 @@ use Command;
 use AxisParameter;
 use ReadableAxisParameter;
 use WriteableAxisParameter;
-use StorableAxisParameter;
 
 
 /// This type represennts TMCM modules other than TMCM-100 and Monopack 2
@@ -53,6 +52,3 @@ pub trait ReadableTmcmAxisParameter: ReadableAxisParameter {}
 
 /// A `WriteableAxisParamtere` useable with all TMCM modules other than TMCM-100 and Monopack 2.
 pub trait WriteableTmcmAxisParameter: WriteableAxisParameter {}
-
-/// A `StorableAxisParameter` useable with all TMCM modules other than TMCM-100 and Monopack 2.
-pub trait StorableTmcmAxisParameter: StorableAxisParameter {}

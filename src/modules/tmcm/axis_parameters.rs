@@ -7,14 +7,12 @@
 use AxisParameter;
 use ReadableAxisParameter;
 use WriteableAxisParameter;
-use StorableAxisParameter;
 use Return;
 
 use modules::tmcm::{
     TmcmAxisParameter,
     ReadableTmcmAxisParameter,
     WriteableTmcmAxisParameter,
-    StorableTmcmAxisParameter,
 };
 #[derive(Debug, PartialEq)]
 pub struct ActualPosition {
@@ -97,8 +95,6 @@ impl WriteableAxisParameter for RightLimitSwitchDisable {
     }
 }
 impl WriteableTmcmAxisParameter for RightLimitSwitchDisable {}
-impl StorableAxisParameter for RightLimitSwitchDisable {}
-impl StorableTmcmAxisParameter for RightLimitSwitchDisable {}
 
 #[derive(Debug, PartialEq)]
 pub struct LeftLimitSwitchDisable {
@@ -127,5 +123,3 @@ impl WriteableAxisParameter for LeftLimitSwitchDisable {
     }
 }
 impl WriteableTmcmAxisParameter for LeftLimitSwitchDisable {}
-impl StorableAxisParameter for LeftLimitSwitchDisable {}
-impl StorableTmcmAxisParameter for LeftLimitSwitchDisable {}

@@ -60,9 +60,6 @@ pub trait WriteableAxisParameter: AxisParameter {
     fn serialize_value(&self) -> [u8; 4];
 }
 
-/// An axis parameter useable with the STAP and RSAP instructions.
-pub trait StorableAxisParameter: AxisParameter {}
-
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum OkStatus {
     /// Successfully executed, no error
