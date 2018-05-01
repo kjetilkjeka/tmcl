@@ -1,10 +1,24 @@
 [package]
 name = "tmcl"
-version = "0.0.0"
+version = "0.1.0-alpha0"
 authors = ["Kjetil Kjeka <kjetilkjeka@gmail.com>"]
+
+license = "Apache-2.0/MIT"
+
+readme = "README.md"
+description = "Trinamic Motion Control Language"
+repository = "https://github.com/kjetilkjeka/tmcl.git"
+
+keywords = ["Trinamic", "TMCL", "can", "RS232", "RS485"]
+categories = ["embedded", "no-std", "hardware-support"]
+
+
 
 [features]
 std = []
 
 [dependencies]
 socketcan = {version = "1.7", optional = true}
+
+[badges]
+travis-ci = {repository = "kjetilkjeka/tmcl", branch = "master"}
