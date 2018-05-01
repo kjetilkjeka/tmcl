@@ -156,7 +156,7 @@ impl AxisParameter for RightLimitSwitchDisable {
     const NUMBER: u8 = 12;
 }
 impl Return for RightLimitSwitchDisable {
-    fn deserialize(array: [u8; 4]) -> Self {RightLimitSwitchDisable{status: array[0] != 0}}
+    fn deserialize(array: [u8; 4]) -> Self {RightLimitSwitchDisable{status: array[3] != 0}}
 }
 impl TmcmAxisParameter for RightLimitSwitchDisable {}
 impl ReadableAxisParameter for RightLimitSwitchDisable {}
@@ -184,7 +184,7 @@ impl AxisParameter for LeftLimitSwitchDisable {
     const NUMBER: u8 = 13;
 }
 impl Return for LeftLimitSwitchDisable {
-    fn deserialize(array: [u8; 4]) -> Self {LeftLimitSwitchDisable{status: array[0] != 0}}
+    fn deserialize(array: [u8; 4]) -> Self {LeftLimitSwitchDisable{status: array[3] != 0}}
 }
 impl TmcmAxisParameter for LeftLimitSwitchDisable {}
 impl ReadableAxisParameter for LeftLimitSwitchDisable {}
