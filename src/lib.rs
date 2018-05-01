@@ -150,7 +150,7 @@ impl<T: Instruction> Command<T> {
 }
 
 impl Reply {
-    fn new(
+    pub fn new(
         reply_address: u8,
         module_address: u8,
         status: Status,
@@ -177,7 +177,7 @@ impl Reply {
 
 impl Status {
     /// Fallible conversion from `u8`
-    fn try_from_u8(id: u8) -> Result<Status, NonValidErrorCode> {
+    pub fn try_from_u8(id: u8) -> Result<Status, NonValidErrorCode> {
         match id {
             100 => Ok(Status::Ok(OkStatus::Ok)),
             101 => Ok(Status::Ok(OkStatus::LoadedIntoEEPROM)),
