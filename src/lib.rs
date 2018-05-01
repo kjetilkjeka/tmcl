@@ -92,7 +92,10 @@ pub enum ErrStatus {
 
 #[must_use]
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Status(Result<OkStatus, ErrStatus>);
+pub enum Status {
+    Ok(OkStatus),
+    Err(ErrStatus),
+}
 
 impl<T: Instruction> Command<T> {
     pub fn new(module_address: u8, instruction: T) -> Command<T> {
@@ -158,22 +161,17 @@ impl Reply {
 }
 
 impl Status {
-    /// Returns `true` if `Status` is `Ok` or `LoadedIntoEEPROM`
-    fn is_ok(&self) -> bool {
-        self.0.is_ok()
-    }
-
     /// Fallible conversion from `u8`
     fn try_from_u8(id: u8) -> Result<Status, NonValidErrorCode> {
         match id {
-            100 => Ok(Status(Ok(OkStatus::Ok))),
-            101 => Ok(Status(Ok(OkStatus::LoadedIntoEEPROM))),
-            1 => Ok(Status(Err(ErrStatus::WrongChecksum))),
-            2 => Ok(Status(Err(ErrStatus::InvalidCommand))),
-            3 => Ok(Status(Err(ErrStatus::WrongType))),
-            4 => Ok(Status(Err(ErrStatus::InvalidValue))),
-            5 => Ok(Status(Err(ErrStatus::EEPROMLocked))),
-            6 => Ok(Status(Err(ErrStatus::CommandNotAvailable))),
+            100 => Ok(Status::Ok(OkStatus::Ok)),
+            101 => Ok(Status::Ok(OkStatus::LoadedIntoEEPROM)),
+            1 => Ok(Status::Err(ErrStatus::WrongChecksum)),
+            2 => Ok(Status::Err(ErrStatus::InvalidCommand)),
+            3 => Ok(Status::Err(ErrStatus::WrongType)),
+            4 => Ok(Status::Err(ErrStatus::InvalidValue)),
+            5 => Ok(Status::Err(ErrStatus::EEPROMLocked)),
+            6 => Ok(Status::Err(ErrStatus::CommandNotAvailable)),
             _ => Err(NonValidErrorCode),
         }
     }

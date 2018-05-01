@@ -8,6 +8,7 @@ use instructions::DirectInstruction;
 use Interface;
 use Return;
 use Status;
+use ErrStatus;
 use Command;
 use AxisParameter;
 use ReadableAxisParameter;
@@ -28,13 +29,12 @@ impl TmcmModule {
     }
 
     /// Synchronously write a command and wait for the Reply
-    pub fn write_command<I: Interface, C: TmcmInstruction + DirectInstruction>(&self, interface: &I, instruction: C) -> Result<Result<C::Return, Status>, I::Error> {
+    pub fn write_command<I: Interface, C: TmcmInstruction + DirectInstruction>(&self, interface: &I, instruction: C) -> Result<Result<C::Return, ErrStatus>, I::Error> {
         interface.transmit_command(&Command::new(self.address, instruction))?;
         let reply = interface.receive_reply()?;
-        if reply.status().is_ok() {
-            Ok(Ok(<C::Return as Return>::deserialize(reply.value())))
-        } else {
-            Ok(Err(reply.status()))
+        match reply.status() {
+            Status::Ok(_) => Ok(Ok(<C::Return as Return>::deserialize(reply.value()))),
+            Status::Err(e) => Ok(Err(e)),
         }
     }
 }
