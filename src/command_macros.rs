@@ -1,3 +1,14 @@
+/// A macro for turning `TMCL` instructions into `Rust` types.
+///
+/// # Examples
+/// ```
+///
+/// use tmcl::*;
+/// use tmcl::modules::tmcm::instructions::*;
+///
+/// assert_eq!(ROR::new(0, 128), tmcl_instruction!(ROR 0, 128));
+///
+/// ```
 #[macro_export]
 macro_rules! tmcl_instruction {
     (ROR $motor_number:expr, $velocity:expr) => {ROR::new($motor_number, $velocity)};

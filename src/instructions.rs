@@ -1,3 +1,5 @@
+//! TMCL Instructions
+
 #[cfg(feature="std")]
 use std::marker::PhantomData;
 #[cfg(not(feature="std"))]
@@ -9,6 +11,7 @@ use {
     ReadableAxisParameter,
 };
 
+/// A `TMCL` `Instruction`
 pub trait Instruction {
     /// The command number (sometimes referred to as the instruction number).
     const INSTRUCTION_NUMBER: u8;

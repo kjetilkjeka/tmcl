@@ -1,3 +1,6 @@
+//! TMCL - Trinamic Motion Control Language
+//!
+//! As described in [The TMCL Reference](https://www.mctechnology.nl/pdf/TMCL_reference_2015.pdf)
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
@@ -49,6 +52,7 @@ pub struct Reply {
 
 /// Axis parameter - useable with SAP, GAP, AAP, STAP and/or RSAP instructions.
 pub trait AxisParameter {
+    /// The Parameter Number.
     const NUMBER: u8;
 }
 
@@ -60,6 +64,7 @@ pub trait WriteableAxisParameter: AxisParameter {
     fn serialize_value(&self) -> [u8; 4];
 }
 
+/// A `Status` that indicates that everything went well.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum OkStatus {
     /// Successfully executed, no error
@@ -69,6 +74,7 @@ pub enum OkStatus {
     LoadedIntoEEPROM = 101,
 }
 
+/// A `Status` that indicate an `Error` has occured.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ErrStatus {
     /// Wrong checksum
@@ -90,6 +96,7 @@ pub enum ErrStatus {
     CommandNotAvailable = 6,
 }
 
+/// Every reply from a `Module` contains a `Status`
 #[must_use]
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Status {
@@ -185,6 +192,7 @@ impl Status {
     }
 }
 
+/// The result of attempting to converted a number that is not a valid status code into `Status`.
 #[derive(Debug)]
 pub struct NonValidErrorCode;
 

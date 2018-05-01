@@ -19,6 +19,11 @@ use modules::tmcm::{
     ReadableTmcmAxisParameter,
     WriteableTmcmAxisParameter,
 };
+
+
+/// The current position of the motor.
+///
+/// Should only be overwritten for reference point setting.
 #[derive(Debug, PartialEq)]
 pub struct ActualPosition {
     pos: i32,
@@ -50,6 +55,9 @@ impl WriteableAxisParameter for ActualPosition {
 }
 impl WriteableTmcmAxisParameter for ActualPosition {}
 
+/// The current rotation speed.
+///
+/// Should never be overwritten.
 #[derive(Debug, PartialEq)]
 pub struct ActualSpeed {
     speed: i16,
@@ -73,6 +81,11 @@ impl Return for ActualSpeed {
 impl ReadableAxisParameter for ActualSpeed {}
 impl ReadableTmcmAxisParameter for ActualSpeed {}
 
+/// The maximum positioning speed.
+///
+/// Should not exceed the physically highest possible value. Adjust the pulse divisor (no. 154),
+/// if the speed value is very  low  (<50)  or  above  the  upper  limit.
+/// See TMC 428 datasheet (p.24) for calculation of physical units.
 #[derive(Debug, PartialEq)]
 pub struct MaximumPositioningSpeed {
     speed: u16,
@@ -107,6 +120,14 @@ impl WriteableAxisParameter for MaximumPositioningSpeed {
 }
 impl WriteableTmcmAxisParameter for MaximumPositioningSpeed {}
 
+/// The absolute maximum current
+///
+/// The most important motor setting, since too high values might cause motor damage!
+///
+/// Note  that  on  the  TMCM-300 the phase current can not be reduced down to zero due
+/// to the Allegro A3972 driver hardware. On the TMCM-300, 303, 310, 110, 610, 611 and 612
+/// the maximum value is 1500 (which means 1.5A).
+/// On all other modules the maximum value is 255 (which means 100% of the maximum current of the module).
 #[derive(Debug, PartialEq)]
 pub struct AbsoluteMaxCurrent {
     current: u16,
@@ -140,6 +161,7 @@ impl WriteableAxisParameter for AbsoluteMaxCurrent {
 }
 impl WriteableTmcmAxisParameter for AbsoluteMaxCurrent {}
 
+/// If set, deactivates the stop function of the right switch
 #[derive(Debug, PartialEq)]
 pub struct RightLimitSwitchDisable {
     status: bool,
@@ -168,6 +190,7 @@ impl WriteableAxisParameter for RightLimitSwitchDisable {
 }
 impl WriteableTmcmAxisParameter for RightLimitSwitchDisable {}
 
+/// Deactivates the stop function of the left switch resp. reference switch if set.
 #[derive(Debug, PartialEq)]
 pub struct LeftLimitSwitchDisable {
     status: bool,
@@ -197,11 +220,22 @@ impl WriteableAxisParameter for LeftLimitSwitchDisable {
 impl WriteableTmcmAxisParameter for LeftLimitSwitchDisable {}
 
 /// Microstep Resolution
+///
+/// Note that modifying this parameter will affect the rotation speed in the same relation.
+/// Even if the module is specified for 16 microsteps only, switching to 32 or 64 microsteps still
+/// brings an enhancement in resolution and smoothness. The position counter will use the full
+/// resolution, but, however, the motor will resolve a maximum of 24 different microsteps only
+/// for the 32 or 64 microstep units.
+///
+/// *) Please note that the fullstep setting as well as the half step setting are not optimized for
+/// use without an adapted microstepping table. These settings just step through the microstep table
+/// in steps of 64 respectively 32. To get real full stepping use axis parameter 211 or load an
+/// adapted microstepping table.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum MicrostepResolution {
     /// Fullstep
     Full = 0,
-    /// 2 microsteps
+    /// Halfstep
     Half = 1,
     /// 4 microsteps
     Micro4 = 2,
