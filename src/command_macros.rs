@@ -42,6 +42,12 @@ macro_rules! tmcl_instruction {
     (GAP AS, $motor_number:expr) => {GAP::<ActualSpeed>::new($motor_number)};
     (GAP AP, $motor_number:expr) => {GAP::<ActualPosition>::new($motor_number)};
 
+    // STAP instructions with tmcm mnemonics
+    (STAP RLSD, $motor_number:expr) => {STAP::<RightLimitSwitchDisable>::new($motor_number)};
+    (STAP LLSD, $motor_number:expr) => {STAP::<LeftLimitSwitchDisable>::new($motor_number)};
+    (STAP AS, $motor_number:expr) => {STAP::<ActualSpeed>::new($motor_number)};
+    (STAP AP, $motor_number:expr) => {STAP::<ActualPosition>::new($motor_number)};
+
     // RFS instruction
     (RFS START, $motor_number:expr) => {RFS::new($motor_number, ReferenceSearchAction::Start)};
     (RFS STOP, $motor_number:expr) => {RFS::new($motor_number, ReferenceSearchAction::Stop)};
