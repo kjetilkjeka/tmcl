@@ -115,6 +115,14 @@ impl<T: Instruction> Command<T> {
         unimplemented!()
     }
 
+    /// Serialize into binary command format suited for I2C
+    ///
+    /// The array will look like the following:
+    /// `[CMD_N, TYPE_N, MOTOR_N, VALUE3, VALUE2, VALUE1, VALUE0, CHECKSUM]`
+    pub fn serialize_i2c(&self) -> [u8; 8] {
+        unimplemented!()
+    }
+
     /// Serialize into binary command format suited for CAN (controller area network)
     ///
     /// When using CAN the module address and checksum will be excluded.
