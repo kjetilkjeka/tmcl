@@ -69,6 +69,40 @@ impl ReadableAxisParameter for ActualSpeed {}
 impl ReadableTmcmAxisParameter for ActualSpeed {}
 
 #[derive(Debug, PartialEq)]
+pub struct MaximumPositioningSpeed {
+    speed: u16,
+}
+impl MaximumPositioningSpeed {
+    pub fn new(speed: u16) -> Self {
+        assert!(speed <= 2047);
+        MaximumPositioningSpeed{speed}
+    }
+    pub fn value(&self) -> u16 {
+        self.speed
+    }
+}
+impl AxisParameter for MaximumPositioningSpeed {
+    const NUMBER: u8 = 4;
+}
+impl Return for MaximumPositioningSpeed {
+    fn deserialize(array: [u8; 4]) -> Self {
+        MaximumPositioningSpeed{speed:
+        (array[3] as u16 |
+            ((array[2] as u16) << 8))
+        }
+    }
+}
+impl TmcmAxisParameter for MaximumPositioningSpeed {}
+impl ReadableAxisParameter for MaximumPositioningSpeed {}
+impl ReadableTmcmAxisParameter for MaximumPositioningSpeed {}
+impl WriteableAxisParameter for MaximumPositioningSpeed {
+    fn serialize_value(&self) -> [u8; 4] {
+        [0, 0, (self.speed >> 8) as u8, self.speed as u8]
+    }
+}
+impl WriteableTmcmAxisParameter for MaximumPositioningSpeed {}
+
+#[derive(Debug, PartialEq)]
 pub struct RightLimitSwitchDisable {
     status: bool,
 }

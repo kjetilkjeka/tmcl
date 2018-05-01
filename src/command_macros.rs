@@ -31,8 +31,11 @@ macro_rules! tmcl_instruction {
     (MVP COORD, $motor_number:expr, 20) => {MVP::new($motor_number, Move::Coordinate(Coordinate::Coordinate20))};
 
     // SAP instructions with tmcm mnemonics
+    (SAP MPS, $motor_number:expr, $speed:expr) => {SAP::new($motor_number, MaximumPositioningSpeed::new($speed))};
+
     (SAP RLSD, $motor_number:expr, 1) => {SAP::new($motor_number, RightLimitSwitchDisable::disabled())};
     (SAP RLSD, $motor_number:expr, 0) => {SAP::new($motor_number, RightLimitSwitchDisable::enabled())};
+
     (SAP LLSD, $motor_number:expr, 1) => {SAP::new($motor_number, LeftLimitSwitchDisable::disabled())};
     (SAP LLSD, $motor_number:expr, 0) => {SAP::new($motor_number, LeftLimitSwitchDisable::enabled())};
 
