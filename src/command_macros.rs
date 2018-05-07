@@ -46,6 +46,8 @@ macro_rules! tmcl_instruction {
 
     (SAP AMC, $motor_number:expr, $current:expr) => {SAP::new($motor_number, AbsoluteMaxCurrent::new($current))};
 
+    (SAP SBC, $motor_number:expr, $current:expr) => {SAP::new($motor_number, StandbyCurrent::new($current))};
+
     (SAP RLSD, $motor_number:expr, 1) => {SAP::new($motor_number, RightLimitSwitchDisable::disabled())};
     (SAP RLSD, $motor_number:expr, 0) => {SAP::new($motor_number, RightLimitSwitchDisable::enabled())};
 

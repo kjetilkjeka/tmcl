@@ -5,6 +5,7 @@
 //! - AS - ActualSpeed (3)
 //! - MPS - MaximumPositioningSpeed (4)
 //! - AMC - AbolsuteMaxCurrent (6)
+//! - SBC - StandbyCurrent (7)
 //! - RLSD - RightLimitSwitchDisable (12)
 //! - LLSD - LeftLimitSwitchDisable (13)
 //! - MSR - MicrostepResolution (140)
@@ -160,6 +161,47 @@ impl WriteableAxisParameter for AbsoluteMaxCurrent {
     }
 }
 impl WriteableTmcmAxisParameter for AbsoluteMaxCurrent {}
+
+/// The absolute maximum current
+///
+/// The most important motor setting, since too high values might cause motor damage!
+///
+/// Note  that  on  the  TMCM-300 the phase current can not be reduced down to zero due
+/// to the Allegro A3972 driver hardware. On the TMCM-300, 303, 310, 110, 610, 611 and 612
+/// the maximum value is 1500 (which means 1.5A).
+/// On all other modules the maximum value is 255 (which means 100% of the maximum current of the module).
+#[derive(Debug, PartialEq)]
+pub struct StandbyCurrent {
+    current: u16,
+}
+impl StandbyCurrent {
+    pub fn new(current: u16) -> Self {
+        StandbyCurrent{current}
+    }
+    pub fn value(&self) -> u16 {
+        self.current
+    }
+}
+impl AxisParameter for StandbyCurrent {
+    const NUMBER: u8 = 7;
+}
+impl Return for StandbyCurrent {
+    fn deserialize(array: [u8; 4]) -> Self {
+        StandbyCurrent{current:
+        (array[3] as u16 |
+            ((array[2] as u16) << 8))
+        }
+    }
+}
+impl TmcmAxisParameter for StandbyCurrent {}
+impl ReadableAxisParameter for StandbyCurrent {}
+impl ReadableTmcmAxisParameter for StandbyCurrent {}
+impl WriteableAxisParameter for StandbyCurrent {
+    fn serialize_value(&self) -> [u8; 4] {
+        [0, 0, (self.current >> 8) as u8, self.current as u8]
+    }
+}
+impl WriteableTmcmAxisParameter for StandbyCurrent {}
 
 /// If set, deactivates the stop function of the right switch
 #[derive(Debug, PartialEq)]
