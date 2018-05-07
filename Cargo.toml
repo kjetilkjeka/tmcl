@@ -1,6 +1,6 @@
 [package]
 name = "tmcl"
-version = "0.1.0-alpha0"
+version = "0.1.0-alpha1"
 authors = ["Kjetil Kjeka <kjetilkjeka@gmail.com>"]
 
 license = "Apache-2.0/MIT"
