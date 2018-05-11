@@ -12,6 +12,9 @@ mod socketcan_impl;
 mod command_macros;
 
 mod instructions;
+#[macro_use]
+mod axis_parameters;
+
 pub mod modules;
 
 pub use instructions::Instruction;
@@ -204,10 +207,38 @@ impl Return for bool {
     fn deserialize(array: [u8; 4]) -> bool {(array[3] & 1) != 0}
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+impl Return for i32 {
+    fn deserialize(array: [u8; 4]) -> i32 {
+        (array[3] as u32 | ((array[2] as u32) << 8) |  ((array[1] as u32) << 16) |((array[0] as u32) << 24)) as i32
+    }
+}
+
+impl Return for i16 {
+    fn deserialize(array: [u8; 4]) -> i16 {
+        (array[3] as u16 | ((array[2] as u16) << 8)) as i16
+    }
+}
+
+impl Return for i8 {
+    fn deserialize(array: [u8; 4]) -> i8 {
+        array[3] as i8
+    }
+}
+
+impl Return for u32 {
+    fn deserialize(array: [u8; 4]) -> u32 {
+        (array[3] as u32 | ((array[2] as u32) << 8) |  ((array[1] as u32) << 16) |((array[0] as u32) << 24))
+    }
+}
+
+impl Return for u16 {
+    fn deserialize(array: [u8; 4]) -> u16 {
+        array[3] as u16 | ((array[2] as u16) << 8)
+    }
+}
+
+impl Return for u8 {
+    fn deserialize(array: [u8; 4]) -> u8 {
+        array[3]
     }
 }

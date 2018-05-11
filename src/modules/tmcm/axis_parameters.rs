@@ -22,105 +22,42 @@ use modules::tmcm::{
 };
 
 
+axis_param_rw!(
 /// The current position of the motor.
 ///
 /// Should only be overwritten for reference point setting.
-#[derive(Debug, PartialEq)]
-pub struct ActualPosition {
-    pos: i32,
-}
-impl ActualPosition {
-    pub fn value(&self) -> i32 {
-        self.pos
-    }
-}
-impl AxisParameter for ActualPosition {
-    const NUMBER: u8 = 1;
-}
-impl Return for ActualPosition {
-    fn deserialize(array: [u8; 4]) -> Self {
-        ActualPosition{pos:
-            (array[3] as u32 |
-            ((array[2] as u32) << 8) |
-            ((array[1] as u32) << 16) |
-            ((array[0] as u32) << 24)) as i32
-        }
-    }
-}
-impl ReadableAxisParameter for ActualPosition {}
+ActualPosition, i32, 1
+);
 impl ReadableTmcmAxisParameter for ActualPosition {}
-impl WriteableAxisParameter for ActualPosition {
-    fn serialize_value(&self) -> [u8; 4] {
-        [(self.pos >> 24) as u8, (self.pos >> 16) as u8, (self.pos >> 8) as u8 , self.pos as u8]
-    }
-}
 impl WriteableTmcmAxisParameter for ActualPosition {}
 
+axis_param_r!(
 /// The current rotation speed.
 ///
 /// Should never be overwritten.
-#[derive(Debug, PartialEq)]
-pub struct ActualSpeed {
-    speed: i16,
-}
-impl ActualSpeed {
-    pub fn value(&self) -> i16 {
-        self.speed
-    }
-}
-impl AxisParameter for ActualSpeed {
-    const NUMBER: u8 = 3;
-}
-impl Return for ActualSpeed {
-    fn deserialize(array: [u8; 4]) -> Self {
-        ActualSpeed{speed:
-            (array[3] as u16 |
-            ((array[2] as u16) << 8)) as i16
-        }
-    }
-}
-impl ReadableAxisParameter for ActualSpeed {}
+ActualSpeed, i16, 3
+);
 impl ReadableTmcmAxisParameter for ActualSpeed {}
 
+axis_param_rw!(
 /// The maximum positioning speed.
 ///
 /// Should not exceed the physically highest possible value. Adjust the pulse divisor (no. 154),
 /// if the speed value is very  low  (<50)  or  above  the  upper  limit.
 /// See TMC 428 datasheet (p.24) for calculation of physical units.
-#[derive(Debug, PartialEq)]
-pub struct MaximumPositioningSpeed {
-    speed: u16,
-}
+MaximumPositioningSpeed, u16, 4
+);
 impl MaximumPositioningSpeed {
     pub fn new(speed: u16) -> Self {
         assert!(speed <= 2047);
-        MaximumPositioningSpeed{speed}
-    }
-    pub fn value(&self) -> u16 {
-        self.speed
-    }
-}
-impl AxisParameter for MaximumPositioningSpeed {
-    const NUMBER: u8 = 4;
-}
-impl Return for MaximumPositioningSpeed {
-    fn deserialize(array: [u8; 4]) -> Self {
-        MaximumPositioningSpeed{speed:
-        (array[3] as u16 |
-            ((array[2] as u16) << 8))
-        }
+        MaximumPositioningSpeed(speed)
     }
 }
 impl TmcmAxisParameter for MaximumPositioningSpeed {}
-impl ReadableAxisParameter for MaximumPositioningSpeed {}
 impl ReadableTmcmAxisParameter for MaximumPositioningSpeed {}
-impl WriteableAxisParameter for MaximumPositioningSpeed {
-    fn serialize_value(&self) -> [u8; 4] {
-        [0, 0, (self.speed >> 8) as u8, self.speed as u8]
-    }
-}
 impl WriteableTmcmAxisParameter for MaximumPositioningSpeed {}
 
+axis_param_rw!(
 /// The absolute maximum current
 ///
 /// The most important motor setting, since too high values might cause motor damage!
@@ -129,39 +66,19 @@ impl WriteableTmcmAxisParameter for MaximumPositioningSpeed {}
 /// to the Allegro A3972 driver hardware. On the TMCM-300, 303, 310, 110, 610, 611 and 612
 /// the maximum value is 1500 (which means 1.5A).
 /// On all other modules the maximum value is 255 (which means 100% of the maximum current of the module).
-#[derive(Debug, PartialEq)]
-pub struct AbsoluteMaxCurrent {
-    current: u16,
-}
+AbsoluteMaxCurrent, u16, 6
+);
 impl AbsoluteMaxCurrent {
     pub fn new(current: u16) -> Self {
-        AbsoluteMaxCurrent{current}
+        AbsoluteMaxCurrent(current)
     }
-    pub fn value(&self) -> u16 {
-        self.current
-    }
-}
-impl AxisParameter for AbsoluteMaxCurrent {
-    const NUMBER: u8 = 6;
-}
-impl Return for AbsoluteMaxCurrent {
-    fn deserialize(array: [u8; 4]) -> Self {
-        AbsoluteMaxCurrent{current:
-        (array[3] as u16 |
-            ((array[2] as u16) << 8))
-        }
-    }
+
 }
 impl TmcmAxisParameter for AbsoluteMaxCurrent {}
-impl ReadableAxisParameter for AbsoluteMaxCurrent {}
 impl ReadableTmcmAxisParameter for AbsoluteMaxCurrent {}
-impl WriteableAxisParameter for AbsoluteMaxCurrent {
-    fn serialize_value(&self) -> [u8; 4] {
-        [0, 0, (self.current >> 8) as u8, self.current as u8]
-    }
-}
 impl WriteableTmcmAxisParameter for AbsoluteMaxCurrent {}
 
+axis_param_rw!(
 /// The absolute maximum current
 ///
 /// The most important motor setting, since too high values might cause motor damage!
@@ -170,95 +87,47 @@ impl WriteableTmcmAxisParameter for AbsoluteMaxCurrent {}
 /// to the Allegro A3972 driver hardware. On the TMCM-300, 303, 310, 110, 610, 611 and 612
 /// the maximum value is 1500 (which means 1.5A).
 /// On all other modules the maximum value is 255 (which means 100% of the maximum current of the module).
-#[derive(Debug, PartialEq)]
-pub struct StandbyCurrent {
-    current: u16,
-}
+StandbyCurrent, u16, 7
+);
 impl StandbyCurrent {
     pub fn new(current: u16) -> Self {
-        StandbyCurrent{current}
-    }
-    pub fn value(&self) -> u16 {
-        self.current
-    }
-}
-impl AxisParameter for StandbyCurrent {
-    const NUMBER: u8 = 7;
-}
-impl Return for StandbyCurrent {
-    fn deserialize(array: [u8; 4]) -> Self {
-        StandbyCurrent{current:
-        (array[3] as u16 |
-            ((array[2] as u16) << 8))
-        }
+        StandbyCurrent(current)
     }
 }
 impl TmcmAxisParameter for StandbyCurrent {}
-impl ReadableAxisParameter for StandbyCurrent {}
 impl ReadableTmcmAxisParameter for StandbyCurrent {}
-impl WriteableAxisParameter for StandbyCurrent {
-    fn serialize_value(&self) -> [u8; 4] {
-        [0, 0, (self.current >> 8) as u8, self.current as u8]
-    }
-}
 impl WriteableTmcmAxisParameter for StandbyCurrent {}
 
+axis_param_rw!(
 /// If set, deactivates the stop function of the right switch
-#[derive(Debug, PartialEq)]
-pub struct RightLimitSwitchDisable {
-    status: bool,
-}
+RightLimitSwitchDisable, bool, 12
+);
 impl RightLimitSwitchDisable {
     pub fn disabled() -> Self {
-        RightLimitSwitchDisable{status: true}
+        RightLimitSwitchDisable(true)
     }
     pub fn enabled() -> Self {
-        RightLimitSwitchDisable{status: false}
+        RightLimitSwitchDisable(false)
     }
-}
-impl AxisParameter for RightLimitSwitchDisable {
-    const NUMBER: u8 = 12;
-}
-impl Return for RightLimitSwitchDisable {
-    fn deserialize(array: [u8; 4]) -> Self {RightLimitSwitchDisable{status: array[3] != 0}}
 }
 impl TmcmAxisParameter for RightLimitSwitchDisable {}
-impl ReadableAxisParameter for RightLimitSwitchDisable {}
 impl ReadableTmcmAxisParameter for RightLimitSwitchDisable {}
-impl WriteableAxisParameter for RightLimitSwitchDisable {
-    fn serialize_value(&self) -> [u8; 4] {
-        [0u8, 0u8, 0u8, self.status as u8]
-    }
-}
 impl WriteableTmcmAxisParameter for RightLimitSwitchDisable {}
 
+axis_param_rw!(
 /// Deactivates the stop function of the left switch resp. reference switch if set.
-#[derive(Debug, PartialEq)]
-pub struct LeftLimitSwitchDisable {
-    status: bool,
-}
+LeftLimitSwitchDisable, bool, 13
+);
 impl LeftLimitSwitchDisable {
     pub fn disabled() -> Self {
-        LeftLimitSwitchDisable{status: true}
+        LeftLimitSwitchDisable(true)
     }
     pub fn enabled() -> Self {
-        LeftLimitSwitchDisable{status: false}
+        LeftLimitSwitchDisable(false)
     }
-}
-impl AxisParameter for LeftLimitSwitchDisable {
-    const NUMBER: u8 = 13;
-}
-impl Return for LeftLimitSwitchDisable {
-    fn deserialize(array: [u8; 4]) -> Self {LeftLimitSwitchDisable{status: array[3] != 0}}
 }
 impl TmcmAxisParameter for LeftLimitSwitchDisable {}
-impl ReadableAxisParameter for LeftLimitSwitchDisable {}
 impl ReadableTmcmAxisParameter for LeftLimitSwitchDisable {}
-impl WriteableAxisParameter for LeftLimitSwitchDisable {
-    fn serialize_value(&self) -> [u8; 4] {
-        [0u8, 0u8, 0u8, self.status as u8]
-    }
-}
 impl WriteableTmcmAxisParameter for LeftLimitSwitchDisable {}
 
 /// Microstep Resolution
