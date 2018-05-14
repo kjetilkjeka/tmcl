@@ -142,7 +142,7 @@ impl<T: Instruction> Command<T> {
         [
             T::INSTRUCTION_NUMBER,
             self.instruction.type_number(),
-            self.instruction.motor_number(),
+            self.instruction.motor_bank_number(),
             self.instruction.serialize_value()[0],
             self.instruction.serialize_value()[1],
             self.instruction.serialize_value()[2],

@@ -17,7 +17,10 @@ pub trait Instruction {
     const INSTRUCTION_NUMBER: u8;
 
     fn type_number(&self) -> u8;
-    fn motor_number(&self) -> u8;
+
+    /// The motor/bank number
+    fn motor_bank_number(&self) -> u8;
+
     fn serialize_value(&self) -> [u8; 4];
 }
 
@@ -59,7 +62,7 @@ impl Instruction for ROR {
         0
     }
 
-    fn motor_number(&self) -> u8 {
+    fn motor_bank_number(&self) -> u8 {
         self.motor_number
     }
 }
@@ -94,7 +97,7 @@ impl Instruction for ROL {
         0
     }
 
-    fn motor_number(&self) -> u8 {
+    fn motor_bank_number(&self) -> u8 {
         self.motor_number
     }
 }
@@ -124,7 +127,7 @@ impl Instruction for MST {
         0
     }
 
-    fn motor_number(&self) -> u8 {
+    fn motor_bank_number(&self) -> u8 {
         self.motor_number
     }
 }
@@ -225,7 +228,7 @@ impl Instruction for MVP {
         0
     }
 
-    fn motor_number(&self) -> u8 {
+    fn motor_bank_number(&self) -> u8 {
         self.motor_number
     }
 }
@@ -264,7 +267,7 @@ impl<T: WriteableAxisParameter> Instruction for SAP<T> {
         T::NUMBER
     }
 
-    fn motor_number(&self) -> u8 {
+    fn motor_bank_number(&self) -> u8 {
         self.motor_number
     }
 }
@@ -302,7 +305,7 @@ impl<T: ReadableAxisParameter> Instruction for GAP<T> {
         T::NUMBER
     }
 
-    fn motor_number(&self) -> u8 {
+    fn motor_bank_number(&self) -> u8 {
         self.motor_number
     }
 }
@@ -338,7 +341,7 @@ impl<T: AxisParameter> Instruction for STAP<T> {
         T::NUMBER
     }
 
-    fn motor_number(&self) -> u8 {
+    fn motor_bank_number(&self) -> u8 {
         self.motor_number
     }
 }
@@ -390,7 +393,7 @@ impl Instruction for RFS {
         self.action as u8
     }
 
-    fn motor_number(&self) -> u8 {
+    fn motor_bank_number(&self) -> u8 {
         self.motor_number
     }
 }
@@ -420,7 +423,7 @@ impl Instruction for SIO {
 
     fn type_number(&self) -> u8 { self.port_number }
 
-    fn motor_number(&self) -> u8 { self.bank_number }
+    fn motor_bank_number(&self) -> u8 { self.bank_number }
 }
 impl DirectInstruction for SIO {
     type Return = ();
@@ -450,7 +453,7 @@ impl Instruction for GIO {
 
     fn type_number(&self) -> u8 { self.port_number }
 
-    fn motor_number(&self) -> u8 { self.bank_number }
+    fn motor_bank_number(&self) -> u8 { self.bank_number }
 }
 impl DirectInstruction for GIO {
     type Return = u32;
