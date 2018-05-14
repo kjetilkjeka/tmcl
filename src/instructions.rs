@@ -412,7 +412,7 @@ pub struct SIO {
     state: bool,
 }
 impl SIO {
-    pub fn new(port_number: u8, bank_number: u8, state: bool) -> Self {
+    pub fn new(bank_number: u8, port_number: u8, state: bool) -> Self {
         SIO {bank_number, port_number, state}
     }
 }
@@ -442,7 +442,7 @@ pub struct GIO {
     port_number: u8,
 }
 impl GIO {
-    pub fn new(port_number: u8, bank_number: u8) -> Self {
+    pub fn new(bank_number: u8, port_number: u8) -> Self {
         GIO {bank_number, port_number}
     }
 }
