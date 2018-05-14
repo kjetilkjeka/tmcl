@@ -398,3 +398,60 @@ impl DirectInstruction for RFS {
     // TODO: use const generics (when it lands) to distinguish return between RFS<Status> and RFS<_>
     type Return = bool;
 }
+
+/// SIO - Set Output
+///
+/// This command sets the status of a digital output either to low (0) or to high (1).
+#[derive(Debug, PartialEq)]
+pub struct SIO {
+    bank_number: u8,
+    port_number: u8,
+    state: bool,
+}
+impl SIO {
+    pub fn new(port_number: u8, bank_number: u8, state: bool) -> Self {
+        SIO {bank_number, port_number, state}
+    }
+}
+impl Instruction for SIO {
+    const INSTRUCTION_NUMBER: u8 = 14;
+
+    fn serialize_value(&self) -> [u8; 4] {[0u8, 0u8, 0u8, self.state as u8]}
+
+    fn type_number(&self) -> u8 { self.port_number }
+
+    fn motor_number(&self) -> u8 { self.bank_number }
+}
+impl DirectInstruction for SIO {
+    type Return = ();
+}
+
+/// GIO - Get Input / Output
+///
+/// This function reads a digital or analogue input port. So, digital lines will read 0 and 1,
+/// while the ADC channels deliver their 10 bit result in the range of 0...1023. In stand-alone mode
+/// the requested value is copied to the "accumulator" (accu) for further processing purposes such
+/// as conditioned jumps. In  direct  mode the value is only output in the “value” field of the reply,
+/// without affecting the accumulator. The actual status of a digital output line can also be read.
+#[derive(Debug, PartialEq)]
+pub struct GIO {
+    bank_number: u8,
+    port_number: u8,
+}
+impl GIO {
+    pub fn new(port_number: u8, bank_number: u8) -> Self {
+        GIO {bank_number, port_number}
+    }
+}
+impl Instruction for GIO {
+    const INSTRUCTION_NUMBER: u8 = 15;
+
+    fn serialize_value(&self) -> [u8; 4] {[0u8, 0u8, 0u8, 0u8]}
+
+    fn type_number(&self) -> u8 { self.port_number }
+
+    fn motor_number(&self) -> u8 { self.bank_number }
+}
+impl DirectInstruction for GIO {
+    type Return = u32;
+}

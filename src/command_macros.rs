@@ -79,4 +79,12 @@ macro_rules! tmcl_instruction {
     (RFS START, $motor_number:expr) => {RFS::new($motor_number, ReferenceSearchAction::Start)};
     (RFS STOP, $motor_number:expr) => {RFS::new($motor_number, ReferenceSearchAction::Stop)};
     (RFS STATUS, $motor_number:expr) => {RFS::new($motor_number, ReferenceSearchAction::Status)};
+
+    // SIO instruction
+    (SIO $port_number:expr, $bank_number:expr, 1) => {SIO::new($port_number, $bank_number, true)};
+    (SIO $port_number:expr, $bank_number:expr, 0) => {SIO::new($port_number, $bank_number, false)};
+
+    // GIO instruction
+    (GIO $port_number:expr, $bank_number:expr) => {SIO::new($port_number, $bank_number)};
+
 }

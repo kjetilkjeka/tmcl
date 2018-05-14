@@ -9,6 +9,8 @@ pub use instructions::{
     GAP,
     STAP,
     RFS,
+    SIO,
+    GIO,
     Move,
     ReferenceSearchAction,
 };
@@ -30,3 +32,5 @@ impl<T: WriteableTmcmAxisParameter> TmcmInstruction for SAP<T> {}
 impl<T: ReadableTmcmAxisParameter> TmcmInstruction for GAP<T> {}
 impl<T: TmcmAxisParameter> TmcmInstruction for STAP<T> {}
 impl TmcmInstruction for RFS {}
+impl TmcmInstruction for SIO {}
+impl TmcmInstruction for GIO {}
