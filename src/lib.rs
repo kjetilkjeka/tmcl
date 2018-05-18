@@ -4,6 +4,13 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+mod lib {
+    #[cfg(feature = "std")]
+    pub use std::*;
+    #[cfg(not(feature = "std"))]
+    pub use core::*;
+}
+
 #[cfg(feature = "socketcan")]
 extern crate socketcan;
 
@@ -26,8 +33,22 @@ use instructions::Return;
 pub trait Interface {
     type Error;
 
-    fn transmit_command<T: Instruction>(&self, command: &Command<T>) -> Result<(), Self::Error>;
-    fn receive_reply(&self) -> Result<Reply, Self::Error>;
+    fn transmit_command<T: Instruction>(&mut self, command: &Command<T>) -> Result<(), Self::Error>;
+    fn receive_reply(&mut self) -> Result<Reply, Self::Error>;
+}
+
+/// All possible errors when communicating with
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum Error<T> {
+
+    /// The interface is used by a different stepper motor.
+    InterfaceBusy,
+
+    /// The interface had an error.
+    InterfaceError(T),
+
+    /// The `TMCL` module reported an error.
+    ProtocolError(ErrStatus),
 }
 
 /// A `Comamnd` is an `Instruction` with a module address.
@@ -240,5 +261,11 @@ impl Return for u16 {
 impl Return for u8 {
     fn deserialize(array: [u8; 4]) -> u8 {
         array[3]
+    }
+}
+
+impl<T> From<ErrStatus> for Error<T> {
+    fn from(es: ErrStatus) -> Self {
+        Error::ProtocolError(es)
     }
 }
