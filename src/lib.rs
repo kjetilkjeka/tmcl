@@ -16,7 +16,6 @@ extern crate socketcan;
 
 #[cfg(feature = "socketcan")]
 mod socketcan_impl;
-mod command_macros;
 
 mod instructions;
 #[macro_use]
