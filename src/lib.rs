@@ -1,6 +1,76 @@
 //! TMCL - Trinamic Motion Control Language
 //!
 //! As described in [The TMCL Reference](https://www.mctechnology.nl/pdf/TMCL_reference_2015.pdf)
+//!
+//! # Examples
+//! ## Socketcan
+//! To use this example the socketcan feature must be enabled.
+//! And a socketcan interface named `vcan0` must exist.
+//!
+//! ```no_run
+//! extern crate tmcl;
+//! # #[cfg(all(feature = "std", feature = "socketcan"))]
+//! extern crate socketcan;
+//!
+//! # #[cfg(all(feature = "std", feature = "socketcan"))]
+//! use std::cell::RefCell;
+//!
+//! use tmcl::modules::tmcm::instructions::*;
+//! use tmcl::modules::tmcm::axis_parameters::*;
+//! use tmcl::modules::tmcm::TmcmModule as Module;
+//! # #[cfg(all(feature = "std", feature = "socketcan"))]
+//! fn main() {
+//!     # std::process::Command::new("sudo ip link add dev vcan0 type vcan").output();
+//!     # std::process::Command::new("sudo ip link set up vcan0").output();
+//!     let interface = RefCell::new(socketcan::CANSocket::open("vcan0").unwrap());
+//!
+//!     let module1 = Module::new(&interface, 1);
+//!     let module2 = Module::new(&interface, 2);
+//!
+//!     module1.write_command(ROR::new(0, 250)).unwrap();
+//!     module2.write_command(ROL::new(0, 250)).unwrap();
+//! }
+//! # #[cfg(not(all(feature = "std", feature = "socketcan")))]
+//! fn main() {}
+//! ```
+//!
+//! ## Socketcan and threading
+//! To use this example the socketcan feature must be enabled.
+//! And a socketcan interface named `vcan0` must exist.
+//!
+//! ```no_run
+//! extern crate tmcl;
+//! # #[cfg(all(feature = "std", feature = "socketcan"))]
+//! extern crate socketcan;
+//!
+//! use std::sync::Mutex;
+//! use std::sync::Arc;
+//!
+//! use tmcl::modules::tmcm::instructions::*;
+//! use tmcl::modules::tmcm::axis_parameters::*;
+//! use tmcl::modules::tmcm::TmcmModule as Module;
+//!
+//! # #[cfg(all(feature = "std", feature = "socketcan"))]
+//! fn main() {
+//!     # std::process::Command::new("sudo ip link add dev vcan0 type vcan").output();
+//!     # std::process::Command::new("sudo ip link set up vcan0").output();
+//!
+//!     let interface = Arc::new(Mutex::new(socketcan::CANSocket::open("vcan0").unwrap()));
+//!
+//!     let module1 = Module::new(interface.clone(), 1);
+//!     let module2 = Module::new(interface, 2);
+//!
+//!     std::thread::spawn(move || {
+//!         module1.write_command(ROR::new(0, 250)).unwrap();
+//!     });
+//!
+//!     std::thread::spawn(move || {
+//!         module2.write_command(ROL::new(0, 250)).unwrap();
+//!     });
+//! }
+//! # #[cfg(not(all(feature = "std", feature = "socketcan")))]
+//! fn main() {}
+//! ```
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
