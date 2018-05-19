@@ -112,8 +112,12 @@ pub trait Interface {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Error<T> {
 
-    /// The interface is used by a different stepper motor.
-    InterfaceBusy,
+    /// This means that the library was not able to get the mutable reference to the interface.
+    ///
+    /// This can be cause by many different things
+    ///  - If `RefCell` is used then the interface might be used by a different stepper motor.
+    ///  - If `Mutex` is used a thread may have panicked and the mutex is poisoned.
+    InterfaceUnavailable,
 
     /// The interface had an error.
     InterfaceError(T),

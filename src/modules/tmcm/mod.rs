@@ -43,7 +43,7 @@ impl<'a, IF: Interface, Cell: InteriorMut<'a, IF>, T: Deref<Target=Cell>> TmcmMo
 
     /// Synchronously write a command and wait for the Reply
     pub fn write_command<Instruction: TmcmInstruction + DirectInstruction>(&'a self, instruction: Instruction) -> Result<Instruction::Return, Error<IF::Error>> {
-        let mut interface = self.interface.borrow_int_mut().or(Err(Error::InterfaceBusy))?;
+        let mut interface = self.interface.borrow_int_mut().or(Err(Error::InterfaceUnavailable))?;
         interface.transmit_command(&Command::new(self.address, instruction)).map_err(|e| Error::InterfaceError(e))?;
         let reply = interface.receive_reply().map_err(|e| Error::InterfaceError(e))?;
         match reply.status() {
