@@ -11,6 +11,8 @@ mod lib {
     pub use core::*;
 }
 
+extern crate interior_mut;
+
 #[cfg(feature = "socketcan")]
 extern crate socketcan;
 

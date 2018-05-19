@@ -15,9 +15,10 @@ categories = ["embedded", "no-std", "hardware-support"]
 
 
 [features]
-std = []
+std = ["interior_mut/std"]
 
 [dependencies]
+interior_mut = {version = "0.1.0-beta0", default-features=false}
 socketcan = {version = "1.7", optional = true}
 
 [badges]
