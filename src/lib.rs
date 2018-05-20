@@ -146,7 +146,7 @@ pub struct Reply {
 
     command_number: u8,
 
-    value: [u8; 4],
+    operand: [u8; 4],
 }
 
 /// Axis parameter - useable with SAP, GAP, AAP, STAP and/or RSAP instructions.
@@ -254,19 +254,19 @@ impl Reply {
         module_address: u8,
         status: Status,
         command_number: u8,
-        value: [u8; 4],
+        operand: [u8; 4],
     ) -> Self {
         Reply {
             reply_address,
             module_address,
             status,
             command_number,
-            value,
+            operand,
         }
     }
 
-    fn value(&self) -> [u8; 4] {
-        self.value
+    fn operand(&self) -> [u8; 4] {
+        self.operand
     }
 
     fn status(&self) -> Status {
@@ -296,53 +296,52 @@ impl Status {
 pub struct NonValidErrorCode;
 
 impl Return for () {
-    fn deserialize(_array: [u8; 4]) -> () {()}
+    fn from_operand(_operand: [u8; 4]) -> () {()}
 }
 
 impl Return for [u8; 4] {
-    fn deserialize(array: [u8; 4]) -> [u8; 4] {
-        // The array returned from an instruction has operand index 0 at the last byte of the array.
-        [array[3], array[2], array[1], array[0]]
+    fn from_operand(array: [u8; 4]) -> [u8; 4] {
+        array
     }
 }
 
 impl Return for bool {
-    fn deserialize(array: [u8; 4]) -> bool {(array[3] & 1) != 0}
+    fn from_operand(array: [u8; 4]) -> bool {(array[0] & 1) != 0}
 }
 
 impl Return for i32 {
-    fn deserialize(array: [u8; 4]) -> i32 {
-        (array[3] as u32 | ((array[2] as u32) << 8) |  ((array[1] as u32) << 16) |((array[0] as u32) << 24)) as i32
+    fn from_operand(array: [u8; 4]) -> i32 {
+        (array[0] as u32 | ((array[1] as u32) << 8) |  ((array[2] as u32) << 16) |((array[3] as u32) << 24)) as i32
     }
 }
 
 impl Return for i16 {
-    fn deserialize(array: [u8; 4]) -> i16 {
-        (array[3] as u16 | ((array[2] as u16) << 8)) as i16
+    fn from_operand(array: [u8; 4]) -> i16 {
+        (array[0] as u16 | ((array[1] as u16) << 8)) as i16
     }
 }
 
 impl Return for i8 {
-    fn deserialize(array: [u8; 4]) -> i8 {
-        array[3] as i8
+    fn from_operand(array: [u8; 4]) -> i8 {
+        array[0] as i8
     }
 }
 
 impl Return for u32 {
-    fn deserialize(array: [u8; 4]) -> u32 {
-        (array[3] as u32 | ((array[2] as u32) << 8) |  ((array[1] as u32) << 16) |((array[0] as u32) << 24))
+    fn from_operand(array: [u8; 4]) -> u32 {
+        (array[0] as u32 | ((array[1] as u32) << 8) |  ((array[2] as u32) << 16) |((array[3] as u32) << 24))
     }
 }
 
 impl Return for u16 {
-    fn deserialize(array: [u8; 4]) -> u16 {
-        array[3] as u16 | ((array[2] as u16) << 8)
+    fn from_operand(array: [u8; 4]) -> u16 {
+        array[0] as u16 | ((array[1] as u16) << 8)
     }
 }
 
 impl Return for u8 {
-    fn deserialize(array: [u8; 4]) -> u8 {
-        array[3]
+    fn from_operand(array: [u8; 4]) -> u8 {
+        array[0]
     }
 }
 

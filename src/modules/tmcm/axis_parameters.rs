@@ -177,7 +177,7 @@ impl AxisParameter for MicrostepResolution {
     const NUMBER: u8 = 140;
 }
 impl Return for MicrostepResolution {
-    fn deserialize(array: [u8; 4]) -> Self {MicrostepResolution::try_from_u8(array[3]).unwrap()}
+    fn from_operand(array: [u8; 4]) -> Self {MicrostepResolution::try_from_u8(array[0]).unwrap()}
 }
 impl TmcmAxisParameter for MicrostepResolution {}
 impl ReadableAxisParameter for MicrostepResolution {}

@@ -47,7 +47,7 @@ impl<'a, IF: Interface, Cell: InteriorMut<'a, IF>, T: Deref<Target=Cell>> Generi
         interface.transmit_command(&Command::new(self.address, instruction)).map_err(|e| Error::InterfaceError(e))?;
         let reply = interface.receive_reply().map_err(|e| Error::InterfaceError(e))?;
         match reply.status() {
-            Status::Ok(_) => Ok(<Inst::Return as Return>::deserialize(reply.value())),
+            Status::Ok(_) => Ok(<Inst::Return as Return>::from_operand(reply.operand())),
             Status::Err(e) => Err(e.into()),
         }
     }

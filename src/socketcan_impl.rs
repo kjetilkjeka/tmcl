@@ -27,7 +27,7 @@ impl Interface for CANSocket {
             frame.data()[0],
             Status::try_from_u8(frame.data()[1]).unwrap(),
             frame.data()[2],
-            [frame.data()[3], frame.data()[4], frame.data()[5], frame.data()[6]],
+            [frame.data()[6], frame.data()[5], frame.data()[4], frame.data()[3]],
         ))
     }
 }

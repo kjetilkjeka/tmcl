@@ -47,8 +47,8 @@ macro_rules! axis_param_define{
 macro_rules! axis_param_define_read {
     ($name:ident, $ty:ty) => {
         impl Return for $name {
-            fn deserialize(array: [u8; 4]) -> Self {
-                $name(<$ty as Return>::deserialize(array))
+            fn from_operand(operand: [u8; 4]) -> Self {
+                $name(<$ty as Return>::from_operand(operand))
             }
         }
         impl ReadableAxisParameter for $name {}
