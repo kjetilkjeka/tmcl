@@ -32,6 +32,11 @@ pub trait DirectInstruction: Instruction {
 
 /// A type that can be used as a return value for an `Instruction`
 pub trait Return {
+
+    /// The deserialization function.
+    ///
+    /// The argument of the deserialize function is the array outlayed in memory.
+    /// In relations to operand bytes it will look like: `[operand[3], operand[2], operand[1], operand[0]]`
     fn deserialize([u8; 4]) -> Self;
 }
 

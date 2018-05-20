@@ -299,6 +299,13 @@ impl Return for () {
     fn deserialize(_array: [u8; 4]) -> () {()}
 }
 
+impl Return for [u8; 4] {
+    fn deserialize(array: [u8; 4]) -> [u8; 4] {
+        // The array returned from an instruction has operand index 0 at the last byte of the array.
+        [array[3], array[2], array[1], array[0]]
+    }
+}
+
 impl Return for bool {
     fn deserialize(array: [u8; 4]) -> bool {(array[3] & 1) != 0}
 }
