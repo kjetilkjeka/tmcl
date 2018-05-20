@@ -20,7 +20,7 @@ use ReadableAxisParameter;
 use WriteableAxisParameter;
 
 
-/// This type represennts TMCM modules other than TMCM-100 and Monopack 2
+/// This type represennts a TMCM module other than TMCM-100 and Monopack 2.
 #[derive(Debug)]
 pub struct TmcmModule<'a, IF: Interface + 'a, Cell: InteriorMut<'a, IF>, T: Deref<Target=Cell> + 'a> {
     /// The module address
