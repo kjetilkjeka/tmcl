@@ -71,6 +71,56 @@
 //! # #[cfg(not(all(feature = "std", feature = "socketcan")))]
 //! fn main() {}
 //! ```
+//!
+//! ## No-std
+//! When using with no-std you can implement `Interface` on the interface you intent to use.
+//!
+//! ```ignore
+//! # // TODO: change ignore to no_run once panic_implementation is stabilized
+//! #![no_std]
+//!
+//! extern crate tmcl;
+//!
+//! use core::cell::RefCell;
+//!
+//! use tmcl::Interface;
+//! use tmcl::Reply;
+//! use tmcl::Command;
+//! use tmcl::Instruction;
+//! use tmcl::modules::tmcm::instructions::*;
+//! use tmcl::modules::tmcm::axis_parameters::*;
+//! use tmcl::modules::tmcm::TmcmModule as Module;
+//!
+//! # struct MyInterface();
+//! # struct MyInterfaceError();
+//!
+//! # impl MyInterface { fn new() -> Self {unimplemented!()} }
+//!
+//! impl Interface for MyInterface {
+//!    type Error = MyInterfaceError;
+//!
+//!    fn transmit_command<T: Instruction>(&mut self, command: &Command<T>) -> Result<(), Self::Error> {
+//!        // Implement transmit_command for your interface
+//!        # unimplemented!()
+//!    }
+//!
+//!    fn receive_reply(&mut self) -> Result<Reply, Self::Error> {
+//!        // Implement receive_reply for your interface
+//!        # unimplemented!()
+//!    }
+//! }
+//!
+//! fn main() {
+//!
+//!     let interface = RefCell::new(MyInterface::new());
+//!
+//!     let module1 = Module::new(&interface, 1);
+//!     let module2 = Module::new(&interface, 2);
+//!
+//!     module1.write_command(ROR::new(0, 250)).unwrap();
+//!     module2.write_command(ROL::new(0, 250)).unwrap();
+//! }
+//! ```
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
