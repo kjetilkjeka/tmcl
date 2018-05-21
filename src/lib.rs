@@ -31,7 +31,7 @@
 //!     module2.write_command(ROL::new(0, 250)).unwrap();
 //! }
 //! # #[cfg(not(all(feature = "std", feature = "socketcan")))]
-//! fn main() {}
+//! # fn main() {}
 //! ```
 //!
 //! ## Socketcan and threading
@@ -69,7 +69,7 @@
 //!     });
 //! }
 //! # #[cfg(not(all(feature = "std", feature = "socketcan")))]
-//! fn main() {}
+//! # fn main() {}
 //! ```
 //!
 //! ## No-std
