@@ -151,46 +151,14 @@ pub enum Move {
     /// the resulting new position value must not exceed the above mentioned limits, too.
     Relative(i32),
 
-    /// Moving one or more motors to a (previously stored) coordinate,
+    /// Moving one or more motors to a (previously stored) coordinate (represented by a coordinate number),
     ///
     /// When moving more than one axis the  module will try  to  interpolate:
     /// The velocities will be calculated so that  all  motors reach their target positions at the same time.
     /// It is important that the maximum accelerations (axis parameter #5) and the ramp  and
     /// pulse dividers (axis parameters #153 and #154) of all axes are set to the same values
     /// as otherwise interpolation will not work correctly.
-    Coordinate(Coordinate),
-}
-
-/// A coordinate number in a `MVP` instruction
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum Coordinate {
-    Coordinate0 = 0,
-    Coordinate1 = 1,
-    Coordinate2 = 2,
-    Coordinate3 = 3,
-    Coordinate4 = 4,
-    Coordinate5 = 5,
-    Coordinate6 = 6,
-    Coordinate7 = 7,
-    Coordinate8 = 8,
-    Coordinate9 = 9,
-    Coordinate10 = 10,
-    Coordinate11 = 11,
-    Coordinate12 = 12,
-    Coordinate13 = 13,
-    Coordinate14 = 14,
-    Coordinate15 = 15,
-    Coordinate16 = 16,
-    Coordinate17 = 17,
-    Coordinate18 = 18,
-    Coordinate19 = 19,
-    Coordinate20 = 20,
-}
-
-impl From<Coordinate> for u8 {
-    fn from(c: Coordinate) -> u8 {
-        c as u8
-    }
+    Coordinate(u32),
 }
 
 /// MVP - Move to Position
@@ -226,7 +194,14 @@ impl Instruction for MVP {
                     (x & 0xff) as u8
                 ]
             },
-            Move::Coordinate(x) => [0, 0, 0, u8::from(x)],
+            Move::Coordinate(x) => {
+                [
+                    ((x >> 24) & 0xff) as u8,
+                    ((x >> 16) & 0xff) as u8,
+                    ((x >> 8) & 0xff) as u8,
+                    (x & 0xff) as u8
+                ]
+            },
         }
     }
 
