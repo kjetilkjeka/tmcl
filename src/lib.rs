@@ -210,7 +210,7 @@ pub trait ReadableAxisParameter: AxisParameter + Return {}
 
 /// An axis parameter useable with the SAP instruction.
 pub trait WriteableAxisParameter: AxisParameter {
-    fn serialize_value(&self) -> [u8; 4];
+    fn operand(&self) -> [u8; 4];
 }
 
 /// A `Status` that indicates that everything went well.
@@ -289,10 +289,10 @@ impl<T: Instruction> Command<T> {
             T::INSTRUCTION_NUMBER,
             self.instruction.type_number(),
             self.instruction.motor_bank_number(),
-            self.instruction.serialize_value()[0],
-            self.instruction.serialize_value()[1],
-            self.instruction.serialize_value()[2],
-            self.instruction.serialize_value()[3],
+            self.instruction.operand()[3],
+            self.instruction.operand()[2],
+            self.instruction.operand()[1],
+            self.instruction.operand()[0],
         ]
     }
 

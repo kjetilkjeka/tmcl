@@ -40,8 +40,8 @@ impl SAP {
 impl Instruction for SAP {
     const INSTRUCTION_NUMBER: u8 = 5;
 
-    fn serialize_value(&self) -> [u8; 4] {
-        [self.operand[3], self.operand[2], self.operand[1], self.operand[0]]
+    fn operand(&self) -> [u8; 4] {
+        self.operand
     }
 
     fn type_number(&self) -> u8 {
@@ -78,7 +78,7 @@ impl GAP {
 impl Instruction for GAP {
     const INSTRUCTION_NUMBER: u8 = 6;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         [0u8, 0u8, 0u8, 0u8]
     }
 
@@ -114,7 +114,7 @@ impl STAP {
 impl Instruction for STAP {
     const INSTRUCTION_NUMBER: u8 = 7;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         [0u8, 0u8, 0u8, 0u8]
     }
 
@@ -151,7 +151,7 @@ impl RSAP {
 impl Instruction for RSAP {
     const INSTRUCTION_NUMBER: u8 = 8;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         [0u8, 0u8, 0u8, 0u8]
     }
 

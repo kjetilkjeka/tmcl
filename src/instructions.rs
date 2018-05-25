@@ -20,7 +20,13 @@ pub trait Instruction {
     /// The motor/bank number
     fn motor_bank_number(&self) -> u8;
 
-    fn serialize_value(&self) -> [u8; 4];
+    /// Return the operand serialized.
+    ///
+    /// Even though the whole frame (in serialized form) is represented as:
+    /// `[..., operand[3], operand[2], operand[1], operand[0], ...]`.
+    /// This function instead return the operand:
+    /// `[operand[0], operand[1], operand[2], operand[3]]`.
+    fn operand(&self) -> [u8; 4];
 }
 
 /// An `Instruction` useable in direct mode
@@ -55,12 +61,12 @@ impl ROR {
 impl Instruction for ROR {
     const INSTRUCTION_NUMBER: u8 = 1;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         return [
-            ((self.velocity >> 24) & 0xff) as u8,
-            ((self.velocity >> 16) & 0xff) as u8,
+            (self.velocity & 0xff) as u8,
             ((self.velocity >> 8) & 0xff) as u8,
-            (self.velocity & 0xff) as u8
+            ((self.velocity >> 16) & 0xff) as u8,
+            ((self.velocity >> 24) & 0xff) as u8
         ]
     }
 
@@ -90,12 +96,12 @@ impl ROL {
 impl Instruction for ROL {
     const INSTRUCTION_NUMBER: u8 = 2;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         return [
-            ((self.velocity >> 24) & 0xff) as u8,
-            ((self.velocity >> 16) & 0xff) as u8,
+            (self.velocity & 0xff) as u8,
             ((self.velocity >> 8) & 0xff) as u8,
-            (self.velocity & 0xff) as u8
+            ((self.velocity >> 16) & 0xff) as u8,
+            ((self.velocity >> 24) & 0xff) as u8
         ]
     }
 
@@ -125,7 +131,7 @@ impl MST {
 impl Instruction for MST {
     const INSTRUCTION_NUMBER: u8 = 3;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         return [0, 0, 0, 0]
     }
 
@@ -176,30 +182,30 @@ impl MVP {
 impl Instruction for MVP {
     const INSTRUCTION_NUMBER: u8 = 4;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         match self.value {
             MoveOperation::Absolute(x) => {
                 [
-                    ((x >> 24) & 0xff) as u8,
-                    ((x >> 16) & 0xff) as u8,
+                    (x & 0xff) as u8,
                     ((x >> 8) & 0xff) as u8,
-                    (x & 0xff) as u8
+                    ((x >> 16) & 0xff) as u8,
+                    ((x >> 24) & 0xff) as u8
                 ]
             },
             MoveOperation::Relative(x) => {
                 [
-                    ((x >> 24) & 0xff) as u8,
-                    ((x >> 16) & 0xff) as u8,
+                    (x & 0xff) as u8,
                     ((x >> 8) & 0xff) as u8,
-                    (x & 0xff) as u8
+                    ((x >> 16) & 0xff) as u8,
+                    ((x >> 24) & 0xff) as u8
                 ]
             },
             MoveOperation::Coordinate(x) => {
                 [
-                    ((x >> 24) & 0xff) as u8,
-                    ((x >> 16) & 0xff) as u8,
+                    (x & 0xff) as u8,
                     ((x >> 8) & 0xff) as u8,
-                    (x & 0xff) as u8
+                    ((x >> 16) & 0xff) as u8,
+                    ((x >> 24) & 0xff) as u8
                 ]
             },
         }
@@ -240,8 +246,8 @@ impl<T: WriteableAxisParameter> SAP<T> {
 impl<T: WriteableAxisParameter> Instruction for SAP<T> {
     const INSTRUCTION_NUMBER: u8 = 5;
 
-    fn serialize_value(&self) -> [u8; 4] {
-        self.axis_parameter.serialize_value()
+    fn operand(&self) -> [u8; 4] {
+        self.axis_parameter.operand()
     }
 
     fn type_number(&self) -> u8 {
@@ -278,7 +284,7 @@ impl<T: ReadableAxisParameter> GAP<T> {
 impl<T: ReadableAxisParameter> Instruction for GAP<T> {
     const INSTRUCTION_NUMBER: u8 = 6;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         [0u8, 0u8, 0u8, 0u8]
     }
 
@@ -314,7 +320,7 @@ impl<T: WriteableAxisParameter> STAP<T> {
 impl<T: WriteableAxisParameter> Instruction for STAP<T> {
     const INSTRUCTION_NUMBER: u8 = 7;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         [0u8, 0u8, 0u8, 0u8]
     }
 
@@ -351,7 +357,7 @@ impl<T: WriteableAxisParameter> RSAP<T> {
 impl<T: WriteableAxisParameter> Instruction for RSAP<T> {
     const INSTRUCTION_NUMBER: u8 = 8;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         [0u8, 0u8, 0u8, 0u8]
     }
 
@@ -403,7 +409,7 @@ impl RFS {
 impl Instruction for RFS {
     const INSTRUCTION_NUMBER: u8 = 13;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         [0u8, 0u8, 0u8, 0u8]
     }
 
@@ -437,7 +443,7 @@ impl SIO {
 impl Instruction for SIO {
     const INSTRUCTION_NUMBER: u8 = 14;
 
-    fn serialize_value(&self) -> [u8; 4] {[0u8, 0u8, 0u8, self.state as u8]}
+    fn operand(&self) -> [u8; 4] {[self.state as u8, 0u8, 0u8, 0u8]}
 
     fn type_number(&self) -> u8 { self.port_number }
 
@@ -467,7 +473,7 @@ impl GIO {
 impl Instruction for GIO {
     const INSTRUCTION_NUMBER: u8 = 15;
 
-    fn serialize_value(&self) -> [u8; 4] {[0u8, 0u8, 0u8, 0u8]}
+    fn operand(&self) -> [u8; 4] {[0u8, 0u8, 0u8, 0u8]}
 
     fn type_number(&self) -> u8 { self.port_number }
 
@@ -514,18 +520,18 @@ pub enum CALC {
 impl Instruction for CALC {
     const INSTRUCTION_NUMBER: u8 = 19;
 
-    fn serialize_value(&self) -> [u8; 4] {
+    fn operand(&self) -> [u8; 4] {
         match self {
-            CALC::Add(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
-            CALC::Sub(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
-            CALC::Mul(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
-            CALC::Div(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
-            CALC::Mod(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
-            CALC::And(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
-            CALC::Or(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
-            CALC::Xor(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Add(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
+            CALC::Sub(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
+            CALC::Mul(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
+            CALC::Div(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
+            CALC::Mod(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
+            CALC::And(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
+            CALC::Or(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
+            CALC::Xor(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
             CALC::Not => [0u8, 0u8, 0u8, 0u8],
-            CALC::Load(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Load(x) => [(x >> 0) as u8, (x >> 8) as u8, (x >> 16) as u8, (x >> 24) as u8],
         }
     }
 

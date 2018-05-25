@@ -183,8 +183,8 @@ impl TmcmAxisParameter for MicrostepResolution {}
 impl ReadableAxisParameter for MicrostepResolution {}
 impl ReadableTmcmAxisParameter for MicrostepResolution {}
 impl WriteableAxisParameter for MicrostepResolution {
-    fn serialize_value(&self) -> [u8; 4] {
-        [0u8, 0u8, 0u8, *self as u8]
+    fn operand(&self) -> [u8; 4] {
+        [*self as u8, 0u8, 0u8, 0u8]
     }
 }
 impl WriteableTmcmAxisParameter for MicrostepResolution {}
