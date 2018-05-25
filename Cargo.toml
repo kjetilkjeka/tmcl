@@ -1,6 +1,6 @@
 [package]
 name = "tmcl"
-version = "0.1.0-alpha4"
+version = "0.1.0-beta0"
 authors = ["Kjetil Kjeka <kjetilkjeka@gmail.com>"]
 
 license = "Apache-2.0/MIT"
@@ -18,7 +18,7 @@ categories = ["embedded", "no-std", "hardware-support"]
 std = ["interior_mut/std"]
 
 [dependencies]
-interior_mut = {version = "0.1.0-beta0", default-features=false}
+interior_mut = {version = "0.1", default-features=false}
 socketcan = {version = "1.7", optional = true}
 
 [badges]
