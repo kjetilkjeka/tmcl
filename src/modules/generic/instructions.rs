@@ -11,6 +11,7 @@ pub use instructions::{
     RFS,
     SIO,
     GIO,
+    CALC,
     MoveOperation,
     ReferenceSearchAction,
 };

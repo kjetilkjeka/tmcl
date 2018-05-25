@@ -476,3 +476,76 @@ impl Instruction for GIO {
 impl DirectInstruction for GIO {
     type Return = u32;
 }
+
+/// CALC - Calculate
+#[derive(Debug, PartialEq)]
+pub enum CALC {
+    /// Add the operand to the accumulator
+    Add(i32),
+
+    /// Subtract the operand from the accumulator
+    Sub(i32),
+
+    /// Multiply the accumulator by a the operand
+    Mul(i32),
+
+    /// Divide the accumulator by the operand
+    Div(i32),
+
+    /// Modulo divide the accumualtor by the operand
+    Mod(i32),
+
+    /// Logical and accumulator with operand
+    And(i32),
+
+    /// Logical or accumulator with operand
+    Or(i32),
+
+    /// Logical xor accumulator with operand
+    Xor(i32),
+
+    /// Logical invert accumulator
+    Not,
+
+    /// Load operand to accumulator
+    Load(i32),
+}
+
+impl Instruction for CALC {
+    const INSTRUCTION_NUMBER: u8 = 19;
+
+    fn serialize_value(&self) -> [u8; 4] {
+        match self {
+            CALC::Add(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Sub(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Mul(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Div(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Mod(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::And(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Or(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Xor(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+            CALC::Not => [0u8, 0u8, 0u8, 0u8],
+            CALC::Load(x) => [(x >> 24) as u8, (x >> 16) as u8, (x >> 8) as u8, (x >> 0) as u8],
+        }
+    }
+
+    fn type_number(&self) -> u8 {
+        match self {
+            CALC::Add(_) => 0,
+            CALC::Sub(_) => 1,
+            CALC::Mul(_) => 2,
+            CALC::Div(_) => 3,
+            CALC::Mod(_) => 4,
+            CALC::And(_) => 5,
+            CALC::Or(_) => 6,
+            CALC::Xor(_) => 7,
+            CALC::Not => 8,
+            CALC::Load(_) => 9,
+        }
+    }
+
+    fn motor_bank_number(&self) -> u8 { 0 }
+}
+impl DirectInstruction for CALC {
+    type Return = ();
+}

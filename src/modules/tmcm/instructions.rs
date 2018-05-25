@@ -12,6 +12,7 @@ pub use instructions::{
     RFS,
     SIO,
     GIO,
+    CALC,
     MoveOperation,
     ReferenceSearchAction,
 };
@@ -35,3 +36,4 @@ impl<T: WriteableTmcmAxisParameter> TmcmInstruction for RSAP<T> {}
 impl TmcmInstruction for RFS {}
 impl TmcmInstruction for SIO {}
 impl TmcmInstruction for GIO {}
+impl TmcmInstruction for CALC {}
