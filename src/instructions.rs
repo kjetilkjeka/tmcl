@@ -143,7 +143,7 @@ impl DirectInstruction for MST {
 
 /// The type and value of a `MVP` instruction
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum Move {
+pub enum MoveOperation {
     /// Moving to an absolute position in the range from -8388608 to +8388608 (-2^23 to +2^23).
     Absolute(i32),
 
@@ -168,17 +168,17 @@ pub enum Move {
 #[derive(Debug, PartialEq)]
 pub struct MVP {
     motor_number: u8,
-    value: Move,
+    value: MoveOperation,
 }
 impl MVP {
-    pub fn new(motor_number: u8, value: Move) -> MVP {MVP{motor_number, value}}
+    pub fn new(motor_number: u8, value: MoveOperation) -> MVP {MVP{motor_number, value}}
 }
 impl Instruction for MVP {
     const INSTRUCTION_NUMBER: u8 = 4;
 
     fn serialize_value(&self) -> [u8; 4] {
         match self.value {
-            Move::Absolute(x) => {
+            MoveOperation::Absolute(x) => {
                 [
                     ((x >> 24) & 0xff) as u8,
                     ((x >> 16) & 0xff) as u8,
@@ -186,7 +186,7 @@ impl Instruction for MVP {
                     (x & 0xff) as u8
                 ]
             },
-            Move::Relative(x) => {
+            MoveOperation::Relative(x) => {
                 [
                     ((x >> 24) & 0xff) as u8,
                     ((x >> 16) & 0xff) as u8,
@@ -194,7 +194,7 @@ impl Instruction for MVP {
                     (x & 0xff) as u8
                 ]
             },
-            Move::Coordinate(x) => {
+            MoveOperation::Coordinate(x) => {
                 [
                     ((x >> 24) & 0xff) as u8,
                     ((x >> 16) & 0xff) as u8,

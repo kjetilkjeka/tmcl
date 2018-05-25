@@ -12,7 +12,7 @@ pub use instructions::{
     RFS,
     SIO,
     GIO,
-    Move,
+    MoveOperation,
     ReferenceSearchAction,
 };
 
