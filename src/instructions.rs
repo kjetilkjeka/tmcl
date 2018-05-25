@@ -6,7 +6,6 @@ use std::marker::PhantomData;
 use core::marker::PhantomData;
 
 use {
-    AxisParameter,
     WriteableAxisParameter,
     ReadableAxisParameter,
 };
@@ -325,11 +324,11 @@ impl<T: ReadableAxisParameter> DirectInstruction for GAP<T> {
 /// Axis parameters are located in RAM memory, so modifications are lost at power down.
 /// This instruction enables permanent storing.
 #[derive(Debug, PartialEq)]
-pub struct STAP<T: AxisParameter> {
+pub struct STAP<T: WriteableAxisParameter> {
     motor_number: u8,
     phantom: PhantomData<T>,
 }
-impl<T: ReadableAxisParameter> STAP<T> {
+impl<T: WriteableAxisParameter> STAP<T> {
     pub fn new(motor_number: u8) -> STAP<T> {
         STAP{
             motor_number,
@@ -337,7 +336,7 @@ impl<T: ReadableAxisParameter> STAP<T> {
         }
     }
 }
-impl<T: AxisParameter> Instruction for STAP<T> {
+impl<T: WriteableAxisParameter> Instruction for STAP<T> {
     const INSTRUCTION_NUMBER: u8 = 7;
 
     fn serialize_value(&self) -> [u8; 4] {
@@ -352,7 +351,7 @@ impl<T: AxisParameter> Instruction for STAP<T> {
         self.motor_number
     }
 }
-impl<T: AxisParameter> DirectInstruction for STAP<T> {
+impl<T: WriteableAxisParameter> DirectInstruction for STAP<T> {
     type Return = ();
 }
 
