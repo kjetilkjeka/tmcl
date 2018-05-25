@@ -330,6 +330,43 @@ impl<T: WriteableAxisParameter> DirectInstruction for STAP<T> {
     type Return = ();
 }
 
+/// RSAP - Restore Axis Parameter
+///
+/// For all configuration-related axis parameters, non-volatile memory locations are provided.
+/// By default, most parameters are automatically restored after power up (see axis parameter list in
+/// chapter 4). A single parameter that has been changed before can be reset by this instruction.
+#[derive(Debug, PartialEq)]
+pub struct RSAP<T: WriteableAxisParameter> {
+    motor_number: u8,
+    phantom: PhantomData<T>,
+}
+impl<T: WriteableAxisParameter> RSAP<T> {
+    pub fn new(motor_number: u8) -> RSAP<T> {
+        RSAP {
+            motor_number,
+            phantom: PhantomData,
+        }
+    }
+}
+impl<T: WriteableAxisParameter> Instruction for RSAP<T> {
+    const INSTRUCTION_NUMBER: u8 = 8;
+
+    fn serialize_value(&self) -> [u8; 4] {
+        [0u8, 0u8, 0u8, 0u8]
+    }
+
+    fn type_number(&self) -> u8 {
+        T::NUMBER
+    }
+
+    fn motor_bank_number(&self) -> u8 {
+        self.motor_number
+    }
+}
+impl<T: WriteableAxisParameter> DirectInstruction for RSAP<T> {
+    type Return = ();
+}
+
 /// Choses what action to execute with the `RFS` instruction
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ReferenceSearchAction {

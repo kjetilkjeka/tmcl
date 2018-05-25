@@ -128,3 +128,40 @@ impl Instruction for STAP {
 impl DirectInstruction for STAP {
     type Return = ();
 }
+
+/// RSAP - Restore Axis Parameter
+///
+/// For all configuration-related axis parameters, non-volatile memory locations are provided.
+/// By default, most parameters are automatically restored after power up (see axis parameter list in
+/// chapter 4). A single parameter that has been changed before can be reset by this instruction.
+#[derive(Debug, PartialEq)]
+pub struct RSAP {
+    motor_number: u8,
+    parameter_number: u8,
+}
+impl RSAP {
+    pub fn new(motor_number: u8, parameter_number: u8) -> STAP {
+        STAP{
+            motor_number,
+            parameter_number,
+        }
+    }
+}
+impl Instruction for RSAP {
+    const INSTRUCTION_NUMBER: u8 = 8;
+
+    fn serialize_value(&self) -> [u8; 4] {
+        [0u8, 0u8, 0u8, 0u8]
+    }
+
+    fn type_number(&self) -> u8 {
+        self.parameter_number
+    }
+
+    fn motor_bank_number(&self) -> u8 {
+        self.motor_number
+    }
+}
+impl DirectInstruction for RSAP {
+    type Return = ();
+}

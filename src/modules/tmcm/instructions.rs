@@ -8,6 +8,7 @@ pub use instructions::{
     SAP,
     GAP,
     STAP,
+    RSAP,
     RFS,
     SIO,
     GIO,
@@ -30,6 +31,7 @@ impl TmcmInstruction for MVP {}
 impl<T: WriteableTmcmAxisParameter> TmcmInstruction for SAP<T> {}
 impl<T: ReadableTmcmAxisParameter> TmcmInstruction for GAP<T> {}
 impl<T: WriteableTmcmAxisParameter> TmcmInstruction for STAP<T> {}
+impl<T: WriteableTmcmAxisParameter> TmcmInstruction for RSAP<T> {}
 impl TmcmInstruction for RFS {}
 impl TmcmInstruction for SIO {}
 impl TmcmInstruction for GIO {}
