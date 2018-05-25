@@ -2,6 +2,98 @@
 //!
 //! As described in [The TMCL Reference](https://www.mctechnology.nl/pdf/TMCL_reference_2015.pdf)
 //!
+//! # Features
+//! ## Read/Write register safety
+//! When using a specific module an attempt to write to a read only register will fail to compile.
+//!
+//! ```compile_fail
+//! extern crate tmcl;
+//!
+//! use std::cell::RefCell;
+//! use tmcl::modules::generic::instructions::*;
+//! use tmcl::modules::tmcm::axis_parameters::*;
+//! // Here we use a specific module
+//! use tmcl::modules::tmcm::TmcmModule as Module;
+//!
+//! # use tmcl::Interface;
+//! # use tmcl::Instruction;
+//! # use tmcl::Command;
+//! # use tmcl::Reply;
+//! #
+//! # struct MyInterface();
+//! # #[derive(Debug)]
+//! # struct MyInterfaceError();
+//! #
+//! # impl MyInterface { fn new() -> Self {unimplemented!()} }
+//! #
+//! # impl Interface for MyInterface {
+//!    # type Error = MyInterfaceError;
+//!    # fn transmit_command<T: Instruction>(&mut self, command: &Command<T>) -> Result<(), Self::Error> {
+//!        # unimplemented!()
+//!    # }
+//!    # fn receive_reply(&mut self) -> Result<Reply, Self::Error> {
+//!        # unimplemented!()
+//!    # }
+//! # }
+//! #
+//! fn main() -> Result<(), tmcl::Error<MyInterfaceError>> {
+//!     let interface = RefCell::new(MyInterface::new());
+//!
+//!     let module = Module::new(&interface, 1);
+//!
+//!     // Since ActualSpeed is a read only register,
+//!     // reading it is the only way construct the type.
+//!     let actual_speed = module.write_command(GAP::<ActualSpeed>::new(0))?;
+//!     module.write_command(SAP::new(0, actual_speed))?;
+//!
+//!     Ok(())
+//! }
+//! ```
+//!
+//! These guarantees do not hold with the generic module as it doesn't know anything about register types.
+//! The following code will fail to write `ActualSpeed` in runtime instead of compile-time.
+//!
+//! ```no_run
+//! extern crate tmcl;
+//!
+//! use std::cell::RefCell;
+//! use tmcl::modules::generic::instructions::*;
+//! // We use the Generic module instead
+//! use tmcl::modules::generic::GenericModule;
+//!
+//! # use tmcl::Interface;
+//! # use tmcl::Instruction;
+//! # use tmcl::Command;
+//! # use tmcl::Reply;
+//! #
+//! # struct MyInterface();
+//! # #[derive(Debug)]
+//! # struct MyInterfaceError();
+//! #
+//! # impl MyInterface { fn new() -> Self {unimplemented!()} }
+//! #
+//! # impl Interface for MyInterface {
+//!    # type Error = MyInterfaceError;
+//!    # fn transmit_command<T: Instruction>(&mut self, command: &Command<T>) -> Result<(), Self::Error> {
+//!        # unimplemented!()
+//!    # }
+//!    # fn receive_reply(&mut self) -> Result<Reply, Self::Error> {
+//!        # unimplemented!()
+//!    # }
+//! # }
+//! #
+//! fn main() {
+//!     let interface = RefCell::new(MyInterface::new());
+//!
+//!     let module = GenericModule::new(&interface, 1);
+//!
+//!     assert_eq!(
+//!         module.write_command(SAP::new(0, 3, [0u8, 0u8, 0u8, 0u8])),
+//!         Error::ProtocolError(ErrStatus::WrongType)
+//!     );
+//! }
+//! ```
+//!
 //! # Examples
 //! ## Socketcan
 //! To use this example the socketcan feature must be enabled.
