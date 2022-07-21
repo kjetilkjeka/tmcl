@@ -448,7 +448,9 @@ impl Return for [u8; 4] {
 }
 
 impl Return for bool {
-    fn from_operand(array: [u8; 4]) -> bool {(array[0] & 1) != 0}
+    fn from_operand(array: [u8; 4]) -> bool {
+        array[0] != 0 || array[1] != 0 || array[2] != 0 || array[3] != 0
+    }
 }
 
 impl Return for i32 {
